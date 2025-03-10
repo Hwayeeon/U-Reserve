@@ -6,8 +6,8 @@ import { Label } from "@/components/ui/label"
 import Link from "next/link";
 
 export function LoginForm({
-  className,
-  ...props
+className,
+...props
 }) {
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -35,11 +35,13 @@ export function LoginForm({
                 <Input id="password" type="password" required />
               </div>
               <Button type="submit" className="w-full">
-                Login
+                <Link href="/dashboard" target="_parent">
+                  Login
+                </Link>
               </Button>
               <div className="text-center text-sm">
                 Don&apos;t have an account?{" "}
-                <Link href="#" className="underline underline-offset-4">
+                <Link href="/signup" className="underline underline-offset-4">
                   Sign up
                 </Link>
               </div>
@@ -55,8 +57,8 @@ export function LoginForm({
       </Card>
       <div
         className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4">
-        By clicking continue, you agree to our <Link href="/dashboard">Terms of Service</Link>{" "}
-        and <Link href="#">Privacy Policy</Link>.
+        By clicking continue, you agree to our <Link href="/tos">Terms of Service</Link>{" "}
+        and <Link href="/privacyPolicy">Privacy Policy</Link>.
       </div>
     </div>
   );
