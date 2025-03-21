@@ -1,0 +1,20 @@
+{
+    "1234": {
+        "name": "DEV",
+        "email":"1234@civitas.ukrida.ac.id",
+        "role":"Superadmin",
+        "password":"David1234"
+    },
+    "9999": {
+        "name": "Admin-Lab",
+        "email":"9999@civitas.ukrida.ac.id",
+        "role":"Admin-Lab",
+        "password":"Admin1234"
+    },
+    "8888": {
+        "name": "Admin-Room",
+        "email":"9999@civitas.ukrida.ac.id",
+        "role":"Admin-Room",
+        "password":"Admin4321"
+    }
+}
