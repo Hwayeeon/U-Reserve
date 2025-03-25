@@ -32,7 +32,17 @@ const data = {
       icon: SquareTerminal,
     },
     {
+      title: "About",
+      url: "#",
+      icon: SquareTerminal,
+    },
+    {
       title: "eTicket",
+      url: "#",
+      icon: Bot,
+    },
+    {
+      title: "Navigation",
       url: "#",
       icon: Bot,
     },
