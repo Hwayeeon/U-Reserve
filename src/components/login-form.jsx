@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label"
 import Link from "next/link";
 import { useRouter } from 'next/navigation'
 import data from '../data/dummy.json'
+import adminData from '../data/dummy2.json'
 
 export function LoginForm({
   className,
@@ -23,13 +24,20 @@ export function LoginForm({
     if (email in data) {
       if (data[email].password === password) {
         // User found, return success
-        router.push('/public')
+        router.push('/user')
       } else {
         // Password does not match
         console.log('Wrong Password.')
       }
-    }
-    else {
+    } else if (email in adminData) {
+      if (adminData[email].password === password) {
+        // User found, return success
+        router.push('/admin')
+      } else {
+        // Password does not match
+        console.log('Wrong Password.')
+      }
+    } else {
       console.log('ID not found.')
     }
   }
