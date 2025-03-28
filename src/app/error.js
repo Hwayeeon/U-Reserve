@@ -3,6 +3,9 @@
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 
+// Buat yang gak paham ini apa? Ini adalah komponen yang akan menampilkan pesan error ketika terjadi error pada aplikasi.
+// Jadi, ketika terjadi error, kita akan menampilkan pesan error ini kepada pengguna.
+
 export default function FilterError({ error }) {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">

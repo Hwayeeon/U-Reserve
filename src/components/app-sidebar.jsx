@@ -9,6 +9,10 @@ import {
   SquareTerminal,
 } from "lucide-react"
 
+// Buat yang gak paham ini apa? Ini adalah komponen sidebar yang akan menampilkan menu navigasi dan informasi tim.
+// Jadi, ketika kita membuka aplikasi, kita akan melihat sidebar ini di sisi kiri layar.
+// Sidebar ini akan menampilkan menu navigasi dan informasi tim yang sedang aktif.
+
 import { NavMain } from "@/components/nav-main"
 import { TeamSwitcher } from "@/components/team-switcher"
 import {

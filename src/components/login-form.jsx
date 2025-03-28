@@ -9,6 +9,11 @@ import { useRouter } from 'next/navigation'
 import data from '../data/dummy.json'
 import adminData from '../data/dummy2.json'
 
+// Buat yang gak paham ini apa? Ini adalah komponen form login yang akan menampilkan form login kepada pengguna.
+// Jadi, ketika pengguna membuka aplikasi, pengguna akan melihat form login ini.
+// Form login ini akan meminta pengguna untuk memasukkan NIM dan password untuk masuk ke aplikasi.
+// Form login ini juga akan menampilkan pesan error jika NIM atau password yang dimasukkan salah.
+
 export function LoginForm({
   className,
   ...props
@@ -24,7 +29,8 @@ export function LoginForm({
     if (email in data) {
       if (data[email].password === password) {
         // User found, return success
-        router.push('/user')
+        document.cookie = `user=${JSON.stringify(data[email])}; path=/; maxAge=3600;`;
+        router.push('/user/userId');
       } else {
         // Password does not match
         console.log('Wrong Password.')
@@ -32,7 +38,8 @@ export function LoginForm({
     } else if (email in adminData) {
       if (adminData[email].password === password) {
         // User found, return success
-        router.push('/admin')
+        document.cookie = `user=${JSON.stringify(adminData[email])}; path=/; maxAge=3600;`
+        router.push('/admin/adminId')
       } else {
         // Password does not match
         console.log('Wrong Password.')
