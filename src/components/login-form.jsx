@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Link from "next/link";
 import { useRouter } from 'next/navigation'
-import data from '../data/dummy.json'
+import studentData from '../data/dummy.json'
 import adminData from '../data/dummy2.json'
 
 // Buat yang gak paham ini apa? Ini adalah komponen form login yang akan menampilkan form login kepada pengguna.
@@ -26,26 +26,22 @@ export function LoginForm({
     const formData = new FormData(event.currentTarget)
     const email = formData.get('email')
     const password = formData.get('password')
-    if (email in data) {
-      if (data[email].password === password) {
-        // User found, return success
-        document.cookie = `user=${JSON.stringify(data[email])}; path=/; maxAge=3600;`;
-        router.push('/user/userId');
+    const d = new Date();
+    d.setTime(d.getTime() + (60*60*1000));
+    let expireTime = d.toUTCString();
+    if (email in studentData || email in adminData) {
+      if (studentData[email]?.password === password) {
+        document.cookie = `role=student; path=/; expires=${expireTime};`;
+        router.push('/user')
+      } else if (adminData[email]?.password === password) {
+        document.cookie = `role=admin; path=/; expires=${expireTime};`;
+        router.push('/admin')
       } else {
         // Password does not match
-        console.log('Wrong Password.')
-      }
-    } else if (email in adminData) {
-      if (adminData[email].password === password) {
-        // User found, return success
-        document.cookie = `user=${JSON.stringify(adminData[email])}; path=/; maxAge=3600;`
-        router.push('/admin/adminId')
-      } else {
-        // Password does not match
-        console.log('Wrong Password.')
+        document.getElementById('error').classList.remove('hidden')
       }
     } else {
-      console.log('ID not found.')
+      document.getElementById('error').classList.remove('hidden')
     }
   }
 
@@ -77,11 +73,8 @@ export function LoginForm({
               <Button type="submit" className="w-full">
                 Login
               </Button>
-              <div className="text-center text-sm">
-                Don&apos;t have an account?{" "}
-                <Link href="#" className="underline underline-offset-4">
-                  Sign up
-                </Link>
+              <div id="error" className="text-red-500 text-sm hidden">
+                Invalid NIM or password. Please try again.
               </div>
             </div>
           </form>
