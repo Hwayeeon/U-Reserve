@@ -7,6 +7,11 @@ import {
   GalleryVerticalEnd,
   Settings2,
   SquareTerminal,
+  UserPen,
+  CircleHelp,
+  Info,
+  History,
+  House,
 } from "lucide-react"
 
 // Buat yang gak paham ini apa? Ini adalah komponen sidebar yang akan menampilkan menu navigasi dan informasi tim.
@@ -33,17 +38,7 @@ const data = {
     {
       title: "Home",
       url: "#",
-      icon: SquareTerminal,
-    },
-    {
-      title: "About",
-      url: "#",
-      icon: SquareTerminal,
-    },
-    {
-      title: "eTicket",
-      url: "#",
-      icon: Bot,
+      icon: House,
     },
     {
       title: "Navigation",
@@ -51,52 +46,24 @@ const data = {
       icon: Bot,
     },
     {
-      title: "Calendar",
+      title: "Profile",
       url: "#",
-      icon: BookOpen,
-      items: [
-        {
-          title: "Academic",
-          url: "#",
-        },
-        {
-          title: "Student Activities",
-          url: "#",
-        },
-      ],
+      icon: UserPen,
     },
     {
-      title: "Downloads",
+      title: "History",
       url: "#",
-      icon: Settings2,
-      items: [
-        {
-          title: "Bulletin",
-          url: "#",
-        },
-        {
-          title: "Catalogues",
-          url: "#",
-        },
-        {
-          title: "Scholarship Forms",
-          url: "#",
-        },
-        {
-          title: "Booklet",
-          url: "#",
-        },
-      ],
+      icon: History,
     },
     {
-      title: "Ruang Prestasi",
+      title: "About",
       url: "#",
-      icon: SquareTerminal,
-      items: [
-        {
-          title: "Lomba",
-        },
-      ],
+      icon: Info,
+    },
+    {
+      title: "FAQ",
+      url: "/faq",
+      icon: CircleHelp,
     },
   ],
 }
