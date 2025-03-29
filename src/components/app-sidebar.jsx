@@ -2,11 +2,8 @@
 
 import * as React from "react"
 import {
-  BookOpen,
   Bot,
   GalleryVerticalEnd,
-  Settings2,
-  SquareTerminal,
   UserPen,
   CircleHelp,
   Info,
@@ -18,6 +15,7 @@ import {
 // Jadi, ketika kita membuka aplikasi, kita akan melihat sidebar ini di sisi kiri layar.
 // Sidebar ini akan menampilkan menu navigasi dan informasi tim yang sedang aktif.
 
+import { NavUser } from "@/components/nav-user"
 import { NavMain } from "@/components/nav-main"
 import { TeamSwitcher } from "@/components/team-switcher"
 import {
@@ -25,9 +23,22 @@ import {
   SidebarContent,
   SidebarHeader,
   SidebarRail,
+  SidebarFooter,
 } from "@/components/ui/sidebar"
 
+// function getCookies(name) {
+//   const value = `; ${document.cookie}`;
+//   const parts = value.split(`; ${name}=`);
+//   if (parts.length === 2) return parts.pop().split(";").shift();
+//   return null;
+// }
+
 const data = {
+  user: {
+    email: "triemas.putra@gmail.com",
+    name: "Raiden Shogun",
+    avatar: "https://cdn.rafled.com/anime-icons/images/u05vyKyGsL73WKPM1iFIkoW7tQ05Ghk8.jpg",
+  },
   teams: [
     {
       name: "U-Reserve",
@@ -80,6 +91,9 @@ export function AppSidebar({
         <NavMain items={data.navMain} />
       </SidebarContent>
       <SidebarRail />
+      <SidebarFooter>
+        <NavUser user={data.user} />
+      </SidebarFooter>
     </Sidebar>
   );
 }

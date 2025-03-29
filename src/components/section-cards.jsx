@@ -1,4 +1,4 @@
-import { IconTrendingDown, IconTrendingUp } from "@tabler/icons-react"
+import { IconTrendingUp } from "@tabler/icons-react"
 
 import { Badge } from "@/components/ui/badge"
 import {
@@ -12,18 +12,16 @@ import {
 import data from "@/data/data.json"
 
 function hitungPresentase(jam) {
-  const totalJam = 730; // 24 jam * 30 hari atau 1 bulan
-  return (jam / totalJam) * 100; // 100% adalah total jam dalam sebulan
+  const totalJam = 720;
+  return (jam / totalJam) * 100;
 }
 
-const statusP = data.filter((item) => item.status === "In Process")
+const statusPending = data.filter((item) => item.status === "Pending");
+
 function presentaseInProcess(data) {
-  const dataTotal = data.length;;
-  const totalPresentase = ((dataTotal - statusP.length) / dataTotal) * 100;
-  return totalPresentase;
+  const dataTotal = data.length;
+  return ( statusPending.length / dataTotal) * 100;
 }
-
-// Buat function di atas sini
 
 export function SectionCards() {
   return (
@@ -59,19 +57,17 @@ export function SectionCards() {
         <CardHeader>
           <CardDescription>Permohonan Peminjaman Ruangan</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            {JSON.stringify(statusP.length)}
+            {JSON.stringify(statusPending.length)}
           </CardTitle>
           <CardAction>
             <Badge variant="outline">
-              <IconTrendingDown />
-              {/* Masukkan logika kamu di sini */}
               {presentaseInProcess(data).toFixed(2)}%
             </Badge>
           </CardAction>
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1.5 text-sm">
           <div className="line-clamp-1 flex gap-2 font-medium">
-            {presentaseInProcess(data).toFixed(0)}% this period <IconTrendingDown className="size-4" />
+            {presentaseInProcess(data).toFixed(0)}% this period
           </div>
           <div className="text-muted-foreground">
             Mohon segera direspon
@@ -79,47 +75,58 @@ export function SectionCards() {
         </CardFooter>
       </Card>
 
-      {/* Active Account ??? */}
+      {/* Total Peminjaman Disetujui */}
       <Card className="@container/card">
         <CardHeader>
-          <CardDescription>Active Accounts</CardDescription>
+          <CardDescription>Peminjaman Disetujui</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            Comming Soon
+            {JSON.stringify(data.filter((item) => item.status === "Approved").length)}
           </CardTitle>
           <CardAction>
             <Badge variant="outline">
               <IconTrendingUp />
-              +???%
+              {((data.filter((item) => item.status === "Approved").length / data.length) * 100).toFixed(2)}%
             </Badge>
           </CardAction>
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1.5 text-sm">
           <div className="line-clamp-1 flex gap-2 font-medium">
-            Walawe <IconTrendingUp className="size-4" />
+            Persetujuan bulan ini <IconTrendingUp className="size-4" />
           </div>
-          <div className="text-muted-foreground">Engagement exceed targets</div>
+          <div className="text-muted-foreground">
+            Dari total permohonan yang masuk
+          </div>
         </CardFooter>
       </Card>
 
-      {/* ??? */}
+      {/* Utilisasi Ruangan */}
       <Card className="@container/card">
         <CardHeader>
-          <CardDescription>???</CardDescription>
+          <CardDescription>Utilisasi Ruangan</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            ???
+            {JSON.stringify(
+              data
+                .filter((item) => item.status === "Approved")
+                .reduce((acc, item) => acc + item.jam, 0)
+            )} Jam
           </CardTitle>
           <CardAction>
             <Badge variant="outline">
-              <IconTrendingUp />
-              +???%
+              {hitungPresentase(
+                data
+                  .filter((item) => item.status === "Approved")
+                  .reduce((acc, item) => acc + item.jam, 0)
+              ).toFixed(2)}%
             </Badge>
           </CardAction>
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1.5 text-sm">
           <div className="line-clamp-1 flex gap-2 font-medium">
-            ??? <IconTrendingUp className="size-4" />
+            Kapasitas terpakai <IconTrendingUp className="size-4" />
           </div>
-          <div className="text-muted-foreground">Sedang tidak baik baik saja paman</div>
+          <div className="text-muted-foreground">
+            Dari total 720 jam tersedia
+          </div>
         </CardFooter>
       </Card>
     </div>
