@@ -1,4 +1,4 @@
-import { AppSidebar } from "@/components/app-sidebar"
+import { AppSidebar } from "@/components/app-sidebar-admin"
 import { ChartAreaInteractive } from "@/components/chart-area-interactive"
 import { DataTable } from "@/components/data-table"
 import { SectionCards } from "@/components/section-cards"
@@ -9,10 +9,8 @@ import {
 } from "@/components/ui/sidebar"
 
 import data from "@/data/data.json"
-import data_user from "@/data/dummy.json"
 
 export default function Page() {
-
   return (
     <SidebarProvider
       style={
