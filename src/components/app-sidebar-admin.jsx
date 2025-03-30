@@ -2,21 +2,18 @@
 
 import * as React from "react"
 import {
-  ArrowUpCircleIcon,
   BarChartIcon,
-  CameraIcon,
   ClipboardListIcon,
   DatabaseIcon,
-  FileCodeIcon,
   FileIcon,
-  FileTextIcon,
   FolderIcon,
   HelpCircleIcon,
   LayoutDashboardIcon,
-  ListIcon,
   SearchIcon,
   SettingsIcon,
   UsersIcon,
+  Inbox,
+  Trash2,
 } from "lucide-react"
 
 import { NavDocuments } from "@/components/nav-documents"
@@ -32,6 +29,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import { Calendar } from "@/components/ui/calendar"
 
 const data = {
   user: {
@@ -46,9 +44,9 @@ const data = {
       icon: LayoutDashboardIcon,
     },
     {
-      title: "Isi apa?",
-      url: "/isi-apa",
-      icon: ListIcon,
+      title: "Users",
+      url: "/users",
+      icon: UsersIcon,
     },
     {
       title: "Analytics",
@@ -61,60 +59,64 @@ const data = {
       icon: FolderIcon,
     },
     {
-      title: "???",
-      url: "/???",
-      icon: UsersIcon,
+      title: "Roles & Permissions",
+      url: "/roles-permissions",
+      icon: SettingsIcon,
+    },
+    {
+      title: "Logs",
+      url: "/logs",
+      icon: ClipboardListIcon,
+    },
+    {
+      title: "Inbox",
+      url: "/inbox",
+      icon: Inbox,
+    },
+    {
+      title: "Trash",
+      url: "/trash",
+      icon: Trash2,
     },
   ],
   navClouds: [
     {
-      title: "Capture",
-      icon: CameraIcon,
-      isActive: true,
+      title: "Uploads",
+      icon: FileIcon,
       url: "#",
       items: [
         {
-          title: "Active Proposals",
+          title: "Active Uploads",
           url: "#",
         },
         {
-          title: "Archived",
+          title: "Archived Uploads",
           url: "#",
         },
       ],
     },
     {
-      title: "Proposal",
-      icon: FileTextIcon,
+      title: "Backups",
+      icon: DatabaseIcon,
       url: "#",
       items: [
         {
-          title: "Active Proposals",
+          title: "Recent Backups",
           url: "#",
         },
         {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Prompts",
-      icon: FileCodeIcon,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
+          title: "Backup History",
           url: "#",
         },
       ],
     },
   ],
   navSecondary: [
+    {
+      title: "Profile",
+      url: "#",
+      icon: UsersIcon,
+    },
     {
       title: "Settings",
       url: "#",
@@ -173,6 +175,15 @@ export function AppSidebar(props) {
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
+        {/* This is for the calendar component with auto-update. Add logic here as needed. */}
+        <SidebarMenu>
+          <Calendar
+            mode="single"
+            selected={new Date()}
+            onSelect={() => {}}
+            className="rounded-md border"
+          />
+        </SidebarMenu>
         <NavUser user={data.user} />
       </SidebarFooter>
     </Sidebar>

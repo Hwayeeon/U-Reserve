@@ -17,6 +17,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { ComingSoon } from "@/components/coming-soon"
+import Image from 'next/image'
 
 const tab = [
   { tab: 'Kampus 1', href: '#Kampus1'},
@@ -27,12 +28,12 @@ const floors = {
   "Kampus 1": [
     {
       floorName: "Floor 1",
-      image: "../favicon.ico",
+      image: "/favicon.ico",
       rooms: ["Room 101", "Room 102", "Room 103"],
     },
     {
       floorName: "Floor 2",
-      image: "../favicon.ico",
+      image: "/favicon.ico",
       rooms: ["Room 201", "Room 202", "Room 203"],
     },
   ],
@@ -113,8 +114,9 @@ export default function Page() {
               {currentFloor.floorName}
             </div>
             <div className="relative w-full max-w-lg h-1/2">
-              <img
+                <Image
                 src={currentFloor.image}
+                fill
                 alt={currentFloor.floorName}
                 className="w-full h-full object-contain border rounded"
               />
