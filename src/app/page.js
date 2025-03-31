@@ -23,6 +23,7 @@ export default function Example() {
               <Image
                 alt="Nextjs"
                 src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600"
+                fill
                 className="h-8 w-auto"
               />
             </a>
