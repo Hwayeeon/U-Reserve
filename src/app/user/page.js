@@ -23,6 +23,42 @@ const tab = [
   { tab: 'Kampus 1', href: '#Kampus1'},
   { tab: 'Kampus 2', href: '#Kampus2'},
 ]
+
+import { useEffect } from "react";
+
+// Jadi ini function TImeDisplay untuk menampilkan waktu sesuai timezone dan locale yang diinginkan dan disini gw pake timezone Asia/Jakarta dan locale en-ID
+// dan gw pake useEffect untuk update waktu setiap detik kalo mau ubah intervalnya tinggal ganti di setInterval(updateTime, 1000) ke angka yang diinginkan
+// dan gw juga pake useState untuk menyimpan waktu yang ditampilkan
+// kalo mau ubah formatnya tinggal ganti di options ke format yang diinginkan
+// dan kalo mau ubah timezone dan locale tinggal ganti di propsnya
+// Masih gak paham? Singkatnya dan gampangnya ini adalah function untuk menampilkan waktu sesuai timezone dan locale yang diinginkan dan di update setiap detik
+
+const TimeDisplay = ({ timeZone, locale = "en-GB" }) => {
+  const [currentTime, setCurrentTime] = useState("");
+
+  useEffect(() => {
+    const updateTime = () => {
+      const now = new Date();
+      const options = {
+        timeZone,
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false,
+      };
+      const timeString = new Intl.DateTimeFormat(locale, options).format(now);
+      setCurrentTime(timeString);
+    };
+
+    updateTime();
+    const intervalId = setInterval(updateTime, 1000);
+
+    return () => clearInterval(intervalId);
+  }, [timeZone, locale]);
+
+  return <span>{currentTime}</span>;
+};
+
 // Dummy data for floors and rooms
 const floors = {
   "Kampus 1": [
@@ -82,6 +118,9 @@ export default function Page() {
                 <BreadcrumbItem>
                   <BreadcrumbPage>Reserve Room</BreadcrumbPage>
                 </BreadcrumbItem>
+                <span className="text-sm text-black ml-2 fixed right-4">
+                  <TimeDisplay timeZone="Asia/Jakarta" locale="en-ID" />
+                </span>
               </BreadcrumbList>
             </Breadcrumb>
           </div>
