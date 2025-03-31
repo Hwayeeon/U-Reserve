@@ -8,6 +8,8 @@ import Link from "next/link";
 import { useRouter } from 'next/navigation'
 import studentData from '../data/dummy.json'
 import adminData from '../data/dummy2.json'
+import { encrypt } from "@/lib/crypt"
+import { useState } from "react"
 
 // Buat yang gak paham ini apa? Ini adalah komponen form login yang akan menampilkan form login kepada pengguna.
 // Jadi, ketika pengguna membuka aplikasi, pengguna akan melihat form login ini.
@@ -19,29 +21,72 @@ export function LoginForm({
   ...props
 }) {
   const router = useRouter()
+  const [failedAttempts, setFailedAttempts] = useState(0);
+  const [isLocked, setIsLocked] = useState(false);
+  const [resetTimeout, setResetTimeout] = useState(null);
+  const MAX_FAILED_ATTEMPTS = 3;
 
   async function handleSubmit(event) {
-    event.preventDefault()
+    event.preventDefault();
 
-    const formData = new FormData(event.currentTarget)
-    const email = formData.get('email')
-    const password = formData.get('password')
+    if (isLocked) return; // Prevent further attempts if locked
+
+    const formData = new FormData(event.currentTarget);
+    const NIM = formData.get('NIM');
+    const password = formData.get('password');
+
+    function handleFailedAttempt() {
+      setFailedAttempts((prev) => {
+        const newCount = prev + 1;
+        if (newCount >= MAX_FAILED_ATTEMPTS) {
+          setIsLocked(true);
+        }
+        return newCount;
+      });
+
+      // Clear any existing timeout and set a new one to reset the counter
+      if (resetTimeout) {
+        clearTimeout(resetTimeout);
+      }
+      setResetTimeout(setTimeout(() => {
+        setFailedAttempts(0);
+        setIsLocked(false);
+      }, 10 * 1000)); // 10 seconds lockout for demonstration purposes
+
+      document.getElementById('error').classList.remove('hidden');
+    }
+
     const d = new Date();
     d.setTime(d.getTime() + (60*60*1000));
     let expireTime = d.toUTCString();
-    if (email in studentData || email in adminData) {
-      if (studentData[email]?.password === password) {
-        document.cookie = `role=student; path=/; expires=${expireTime};`;
-        router.push('/user')
-      } else if (adminData[email]?.password === password) {
-        document.cookie = `role=admin; path=/; expires=${expireTime};`;
-        router.push('/admin')
+
+    if (NIM in studentData || NIM in adminData) {
+      if (studentData[NIM]?.password === password) {
+        const data = studentData[NIM];
+        // Encrypt the user data and role
+        const encryptedRole = encrypt('Student', data.email, data.name);
+        const encryptedData = encrypt(JSON.stringify(data));
+        // Set the cookies with the encrypted data
+        document.cookie = `role=${encryptedRole}; path=/; expires=${expireTime};`;
+        document.cookie = `user=${encryptedData}; path=/; expires=${expireTime};`;
+        // Redirect to the user dashboard
+        router.push('/user');
+      } else if (adminData[NIM]?.password === password) {
+        const data = adminData[NIM];
+        // Encrypt the user data and role
+        const encryptedRole = encrypt('Admin', data.email, data.name);
+        const encryptedData = encrypt(JSON.stringify(data));
+        // Set the cookies with the encrypted data
+        document.cookie = `role=${encryptedRole}; path=/; expires=${expireTime};`;
+        document.cookie = `user=${encryptedData}; path=/; expires=${expireTime};`;
+        // Redirect to the admin dashboard
+        router.push('/admin');
       } else {
         // Password does not match
-        document.getElementById('error').classList.remove('hidden')
+        handleFailedAttempt();
       }
     } else {
-      document.getElementById('error').classList.remove('hidden')
+      handleFailedAttempt();
     }
   }
 
@@ -58,8 +103,8 @@ export function LoginForm({
                 </p>
               </div>
               <div className="grid gap-3">
-                <Label htmlFor="email">NIM</Label>
-                <Input name="email" id="email" type="string" placeholder="XXXXXXXXX" required />
+                <Label htmlFor="NIM">NIM</Label>
+                <Input name="NIM" id="NIM" type="string" placeholder="XXXXXXXXX" required />
               </div>
               <div className="grid gap-3">
                 <div className="flex items-center">
@@ -70,11 +115,13 @@ export function LoginForm({
                 </div>
                 <Input name="password" id="password" type="password" required />
               </div>
-              <Button type="submit" className="w-full">
-                Login
+              <Button type="submit" className="w-full" disabled={isLocked}>
+                {isLocked ? "Locked" : "Login"}
               </Button>
               <div id="error" className="text-red-500 text-sm hidden">
-                Invalid NIM or password. Please try again.
+                {isLocked
+                  ? "Too many failed attempts. Please try again later."
+                  : "Invalid NIM or password. Please try again."}
               </div>
             </div>
           </form>

@@ -38,22 +38,32 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { useState } from "react";
-
+import { useState, useEffect } from "react";
 
 export function NavUser({
   user
 }) {
   const { isMobile } = useSidebar()
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false)
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (!isClient) {
+    return null; // Prevent rendering on the server
+  }
 
   async function logOut() {
-    const d = new Date()
-    d.setTime(d.getTime() - 1)
-    let expireTime = d.toUTCString()
-    document.cookie = `role=; path=/; expires=${expireTime};`
-    window.location.reload()
+    const d = new Date();
+    d.setTime(d.getTime() - 1);
+    let expireTime = d.toUTCString();
+    document.cookie = `role=; path=/; expires=${expireTime};`;
+    document.cookie = `user=; path=/; expires=${expireTime};`;
+    window.location.reload();
   }
+
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -63,7 +73,7 @@ export function NavUser({
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
               <Avatar className="h-8 w-8 rounded-lg grayscale">
-                <AvatarImage src={user.avatar} alt={user.name} />
+                <AvatarImage src={user?.avatar} alt={user?.name} />
                 <AvatarFallback className="rounded-lg">CN</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
@@ -83,7 +93,7 @@ export function NavUser({
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user.avatar} alt={user.name} />
+                  <AvatarImage src={user?.avatar} alt={user?.name} />
                   <AvatarFallback className="rounded-lg">K1</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
