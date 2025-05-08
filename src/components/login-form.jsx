@@ -6,39 +6,70 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Link from "next/link";
 import { useRouter } from 'next/navigation'
-import data from '../data/dummy.json'
-import adminData from '../data/dummy2.json'
+import { useState } from "react"
+import { getCookies } from "@/lib/cookies"
+
+// Buat yang gak paham ini apa? Ini adalah komponen form login yang akan menampilkan form login kepada pengguna.
+// Jadi, ketika pengguna membuka aplikasi, pengguna akan melihat form login ini.
+// Form login ini akan meminta pengguna untuk memasukkan NIM dan password untuk masuk ke aplikasi.
+// Form login ini juga akan menampilkan pesan error jika NIM atau password yang dimasukkan salah.
 
 export function LoginForm({
   className,
   ...props
 }) {
   const router = useRouter()
+  const [failedAttempts, setFailedAttempts] = useState(0);
+  const [isLocked, setIsLocked] = useState(false);
+  const [resetTimeout, setResetTimeout] = useState(null);
+  const MAX_FAILED_ATTEMPTS = 4; // Maximum number of failed attempts before lockout = 5
 
   async function handleSubmit(event) {
-    event.preventDefault()
+    event.preventDefault();
 
-    const formData = new FormData(event.currentTarget)
-    const email = formData.get('email')
-    const password = formData.get('password')
-    if (email in data) {
-      if (data[email].password === password) {
-        // User found, return success
-        router.push('/user')
-      } else {
-        // Password does not match
-        console.log('Wrong Password.')
+    if (isLocked) return; // Prevent further attempts if locked
+
+    const formData = new FormData(event.currentTarget);
+    const NIM = formData.get('NIM');
+    const password = formData.get('password');
+
+    function handleFailedAttempt() {
+      setFailedAttempts(() => {
+        if (failedAttempts >= MAX_FAILED_ATTEMPTS) {
+          setIsLocked(true);
+        }
+        return failedAttempts + 1;
+      });
+
+      // Clear any existing timeout and set a new one to reset the counter
+      if (resetTimeout) {
+        clearTimeout(resetTimeout);
       }
-    } else if (email in adminData) {
-      if (adminData[email].password === password) {
-        // User found, return success
-        router.push('/admin')
-      } else {
-        // Password does not match
-        console.log('Wrong Password.')
+      setResetTimeout(setTimeout(() => {
+        setFailedAttempts(0);
+        setIsLocked(false);
+      }, 10 * 1000)); // 10 seconds lockout for demonstration purposes
+
+      document.getElementById('error').classList.remove('hidden');
+    }
+
+    const response = await fetch('/api/login', {
+      method: 'POST',
+      body: JSON.stringify({ NIM, password }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (response.ok) {
+      const role = getCookies('role');
+      if (role === 'Student') {
+        router.push('/user');
+      } else if (role === 'Admin') {
+        router.push('/admin');
       }
     } else {
-      console.log('ID not found.')
+      handleFailedAttempt();
     }
   }
 
@@ -55,8 +86,8 @@ export function LoginForm({
                 </p>
               </div>
               <div className="grid gap-3">
-                <Label htmlFor="email">NIM</Label>
-                <Input name="email" id="email" type="string" placeholder="XXXXXXXXX" required />
+                <Label htmlFor="NIM">NIM</Label>
+                <Input name="NIM" id="NIM" type="string" placeholder="XXXXXXXXX" required />
               </div>
               <div className="grid gap-3">
                 <div className="flex items-center">
@@ -67,14 +98,13 @@ export function LoginForm({
                 </div>
                 <Input name="password" id="password" type="password" required />
               </div>
-              <Button type="submit" className="w-full">
-                Login
+              <Button type="submit" className="w-full" disabled={isLocked}>
+                {isLocked ? "Locked" : "Login"}
               </Button>
-              <div className="text-center text-sm">
-                Don&apos;t have an account?{" "}
-                <Link href="#" className="underline underline-offset-4">
-                  Sign up
-                </Link>
+              <div id="error" className="text-red-500 text-sm hidden">
+                {isLocked
+                  ? "Too many failed attempts. Please try again later."
+                  : "Invalid NIM or password. Please try again."}
               </div>
             </div>
           </form>

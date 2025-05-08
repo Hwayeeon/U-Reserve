@@ -1,0 +1,44 @@
+[
+  {
+    "id": 60,
+    "namaRuangan": "E305",
+    "alasan": "peminjaman ruangan kelas",
+    "status": "Rejected",
+    "admin": "Triemas Putra"
+  },
+  {
+    "id": 61,
+    "namaRuangan": "E306",
+    "alasan": "peminjaman aktifitas club",
+    "status": "Approved",
+    "admin": "Davidson"
+  },
+  {
+    "id": 62,
+    "namaRuangan": "E307",
+    "alasan": "peminjaman rapat organisasi",
+    "status": "Pending",
+    "admin": "Christian"
+  },
+  {
+    "id": 63,
+    "namaRuangan": "A4EPW7",
+    "alasan": "peminjaman ruangan kelas",
+    "status": "Rejected",
+    "admin": "MickeyTB"
+  },
+  {
+    "id": 64,
+    "namaRuangan": "A4EPW8",
+    "alasan": "peminjaman aktifitas club",
+    "status": "Approved",
+    "admin": "Austin"
+  },
+  {
+    "id": 65,
+    "namaRuangan": "A4EPW9",
+    "alasan": "peminjaman rapat organisasi",
+    "status": "Pending",
+    "admin": "Christian"
+  }
+]

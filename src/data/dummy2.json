@@ -1,20 +1,23 @@
 {
     "1234": {
-        "name": "DEV",
+        "name": "Bombardino Crocodillo",
         "email":"1234@civitas.ukrida.ac.id",
         "role":"Superadmin",
-        "password":"David1234"
+        "password":"David1234",
+        "avatar":"https://i1.sndcdn.com/artworks-ACVdFsOSQyupQv3b-UkcUtA-t500x500.png"
     },
     "9999": {
         "name": "Admin-Lab",
         "email":"9999@civitas.ukrida.ac.id",
         "role":"Admin-Lab",
-        "password":"Admin1234"
+        "password":"Admin1234",
+        "avatar":"https://play.pokemonshowdown.com/sprites/trainers/clair.png"
     },
     "8888": {
         "name": "Admin-Room",
         "email":"9999@civitas.ukrida.ac.id",
         "role":"Admin-Room",
-        "password":"Admin4321"
+        "password":"Admin4321",
+        "avatar":"https://play.pokemonshowdown.com/sprites/trainers/flint.png"
     }
 }
