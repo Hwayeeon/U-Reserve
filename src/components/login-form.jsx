@@ -6,8 +6,13 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Link from "next/link";
 import { useRouter } from 'next/navigation'
+<<<<<<< HEAD
 import { useState } from "react"
 import { getCookies } from "@/lib/cookies"
+=======
+import studentData from '../data/dummy.json'
+import adminData from '../data/dummy2.json'
+>>>>>>> parent of 71c0c20 (Merge pull request #21 from Hwayeeon/RPL-14-Session)
 
 // Buat yang gak paham ini apa? Ini adalah komponen form login yang akan menampilkan form login kepada pengguna.
 // Jadi, ketika pengguna membuka aplikasi, pengguna akan melihat form login ini.
@@ -19,6 +24,7 @@ export function LoginForm({
   ...props
 }) {
   const router = useRouter()
+<<<<<<< HEAD
   const [failedAttempts, setFailedAttempts] = useState(0);
   const [isLocked, setIsLocked] = useState(false);
   const [resetTimeout, setResetTimeout] = useState(null);
@@ -67,9 +73,31 @@ export function LoginForm({
         router.push('/user');
       } else if (role === 'Admin') {
         router.push('/admin');
+=======
+
+  async function handleSubmit(event) {
+    event.preventDefault()
+
+    const formData = new FormData(event.currentTarget)
+    const email = formData.get('email')
+    const password = formData.get('password')
+    const d = new Date();
+    d.setTime(d.getTime() + (60*60*1000));
+    let expireTime = d.toUTCString();
+    if (email in studentData || email in adminData) {
+      if (studentData[email]?.password === password) {
+        document.cookie = `role=student; path=/; expires=${expireTime};`;
+        router.push('/user')
+      } else if (adminData[email]?.password === password) {
+        document.cookie = `role=admin; path=/; expires=${expireTime};`;
+        router.push('/admin')
+      } else {
+        // Password does not match
+        document.getElementById('error').classList.remove('hidden')
+>>>>>>> parent of 71c0c20 (Merge pull request #21 from Hwayeeon/RPL-14-Session)
       }
     } else {
-      handleFailedAttempt();
+      document.getElementById('error').classList.remove('hidden')
     }
   }
 
@@ -86,8 +114,8 @@ export function LoginForm({
                 </p>
               </div>
               <div className="grid gap-3">
-                <Label htmlFor="NIM">NIM</Label>
-                <Input name="NIM" id="NIM" type="string" placeholder="XXXXXXXXX" required />
+                <Label htmlFor="email">NIM</Label>
+                <Input name="email" id="email" type="string" placeholder="XXXXXXXXX" required />
               </div>
               <div className="grid gap-3">
                 <div className="flex items-center">
@@ -98,13 +126,11 @@ export function LoginForm({
                 </div>
                 <Input name="password" id="password" type="password" required />
               </div>
-              <Button type="submit" className="w-full" disabled={isLocked}>
-                {isLocked ? "Locked" : "Login"}
+              <Button type="submit" className="w-full">
+                Login
               </Button>
               <div id="error" className="text-red-500 text-sm hidden">
-                {isLocked
-                  ? "Too many failed attempts. Please try again later."
-                  : "Invalid NIM or password. Please try again."}
+                Invalid NIM or password. Please try again.
               </div>
             </div>
           </form>

@@ -26,10 +26,12 @@ import {
   SidebarFooter,
 } from "@/components/ui/sidebar"
 
-import { getCookies } from "@/lib/cookies"
-
 const data = {
-  user: getCookies("user"),
+  user: {
+    email: "triemas.putra@gmail.com",
+    name: "Raiden Shogun",
+    avatar: "https://cdn.rafled.com/anime-icons/images/u05vyKyGsL73WKPM1iFIkoW7tQ05Ghk8.jpg",
+  },
   teams: [
     {
       name: "U-Reserve",

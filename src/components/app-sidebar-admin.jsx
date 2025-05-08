@@ -30,10 +30,13 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { Calendar } from "@/components/ui/calendar"
-import { getCookies } from "@/lib/cookies"
 
 const data = {
-  user: getCookies("user"),
+  user: {
+    name: "bombardino crocodilo",
+    email: "triemas.putra@gmail.com",
+    avatar: "https://i1.sndcdn.com/artworks-ACVdFsOSQyupQv3b-UkcUtA-t500x500.png",
+  },
   navMain: [
     {
       title: "Dashboard",

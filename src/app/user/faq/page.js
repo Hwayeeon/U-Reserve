@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { ComingSoon } from "@/components/coming-soon";
 import { FloorMap } from "@/components/floor-map";
 import floorPath from "@/data/path.json";
@@ -26,3 +27,13 @@ export default function FAQ() {
     </div>
   );
 }
+=======
+export default function ProfilePage() {
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen py-2">
+      <h1 className="text-3xl font-bold">Profile Page</h1>
+      <p className="mt-4 text-lg">This is the profile page.</p>
+    </div>
+  );
+} 
+>>>>>>> parent of 71c0c20 (Merge pull request #21 from Hwayeeon/RPL-14-Session)
