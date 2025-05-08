@@ -1,28 +1,68 @@
-import { ComingSoon } from "@/components/coming-soon";
-import { FloorMap } from "@/components/floor-map";
-import floorPath from "@/data/path.json";
+//RPL-8-sidebar
+'use client'
 
-export default function FAQ() {
-  const floorKey = "floor1"; // Example: dynamically determine the floor key
-  const floorData = floorPath[floorKey];
+import { useState } from 'react'
+import { AppSidebar } from "@/components/app-sidebar"
+import { Separator } from "@/components/ui/separator"
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar"
 
-  if (!floorData) {
-    return <div>Floor data not found</div>;
-  }
+export default function Page() {
+  const [openIndex, setOpenIndex] = useState(null);
+
+  const toggleAccordion = (index) => {
+    setOpenIndex(openIndex === index ? null : index);
+  };
+
+  const faqItems = [
+    { question: "What is U-Reserve?", answer: "U-Reserve is a room reservation system." },
+    { question: "How do I reserve a room?", answer:
+      (<div>
+        <p>Learn to reserve rooms with U-Reserve:</p>
+        <div className="mt-2">
+        <iframe 
+        width="600" 
+        height="315" 
+        src="https://www.youtube.com/embed/dQw4w9WgXcQ?si=VqP0dAqE_Q4qKGL2"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen></iframe>
+        </div>
+        </div>
+      ) 
+    },
+    { question: "When are the operating hours?", answer:"Our operating hours are from 8 AM to 10 PM daily."},
+    { question: "Can I cancel my reservation?", answer: "Yes, you can cancel your reservation up to 24 hours before the reserved time." },
+  ];
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      <FloorMap
-        className="w-full min-h-screen bg-gray-100 flex flex-col justify-center items-center px-6"
-        floorObject={{
-          floorName: floorKey,
-          floorImage: floorData,
-          floorPlanWidth: 1200,
-          floorPlanHeight: 1400,
-          floorPlanScale: 1,
-        }}
-      />
-      <ComingSoon />
+    <SidebarProvider>
+      <AppSidebar />
+      <div className="flex flex-1 items-start justify-center">
+      <div className="w-full max-w-md min-w-[90%] my-4">
+        <h1 className="text-4xl font-bold text-center">FAQ</h1>
+        <div className="mt-4 text-lg">
+          {faqItems.map((item, index) => (
+            <div key={index} className="border-b">
+              <button
+                onClick={() => toggleAccordion(index)}
+                className="w-full text-left py-2 font-medium flex justify-between items-center"
+              >
+                {item.question}
+                <span>{openIndex === index ? "-" : "+"}</span>
+              </button>
+              {openIndex === index && (
+                <div className="pl-4 py-2 text-gray-600">
+                  {item.answer}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
-  );
-}
+    </SidebarProvider>
+)
+};

@@ -43,11 +43,6 @@ const data = {
       icon: House,
     },
     {
-      title: "Navigation",
-      url: "#",
-      icon: Bot,
-    },
-    {
       title: "Profile",
       url: "#",
       icon: UserPen,
