@@ -6,10 +6,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Link from "next/link";
 import { useRouter } from 'next/navigation'
-import studentData from '../data/dummy.json'
-import adminData from '../data/dummy2.json'
-import { encrypt } from "@/lib/crypt"
 import { useState } from "react"
+import { getCookies } from "@/lib/cookies"
 
 // Buat yang gak paham ini apa? Ini adalah komponen form login yang akan menampilkan form login kepada pengguna.
 // Jadi, ketika pengguna membuka aplikasi, pengguna akan melihat form login ini.
@@ -24,7 +22,7 @@ export function LoginForm({
   const [failedAttempts, setFailedAttempts] = useState(0);
   const [isLocked, setIsLocked] = useState(false);
   const [resetTimeout, setResetTimeout] = useState(null);
-  const MAX_FAILED_ATTEMPTS = 3;
+  const MAX_FAILED_ATTEMPTS = 4; // Maximum number of failed attempts before lockout = 5
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -36,12 +34,11 @@ export function LoginForm({
     const password = formData.get('password');
 
     function handleFailedAttempt() {
-      setFailedAttempts((prev) => {
-        const newCount = prev + 1;
-        if (newCount >= MAX_FAILED_ATTEMPTS) {
+      setFailedAttempts(() => {
+        if (failedAttempts >= MAX_FAILED_ATTEMPTS) {
           setIsLocked(true);
         }
-        return newCount;
+        return failedAttempts + 1;
       });
 
       // Clear any existing timeout and set a new one to reset the counter
@@ -56,34 +53,20 @@ export function LoginForm({
       document.getElementById('error').classList.remove('hidden');
     }
 
-    const d = new Date();
-    d.setTime(d.getTime() + (60*60*1000));
-    let expireTime = d.toUTCString();
+    const response = await fetch('/api/login', {
+      method: 'POST',
+      body: JSON.stringify({ NIM, password }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
 
-    if (NIM in studentData || NIM in adminData) {
-      if (studentData[NIM]?.password === password) {
-        const data = studentData[NIM];
-        // Encrypt the user data and role
-        const encryptedRole = encrypt('Student', data.email, data.name);
-        const encryptedData = encrypt(JSON.stringify(data));
-        // Set the cookies with the encrypted data
-        document.cookie = `role=${encryptedRole}; path=/; expires=${expireTime};`;
-        document.cookie = `user=${encryptedData}; path=/; expires=${expireTime};`;
-        // Redirect to the user dashboard
+    if (response.ok) {
+      const role = getCookies('role');
+      if (role === 'Student') {
         router.push('/user');
-      } else if (adminData[NIM]?.password === password) {
-        const data = adminData[NIM];
-        // Encrypt the user data and role
-        const encryptedRole = encrypt('Admin', data.email, data.name);
-        const encryptedData = encrypt(JSON.stringify(data));
-        // Set the cookies with the encrypted data
-        document.cookie = `role=${encryptedRole}; path=/; expires=${expireTime};`;
-        document.cookie = `user=${encryptedData}; path=/; expires=${expireTime};`;
-        // Redirect to the admin dashboard
+      } else if (role === 'Admin') {
         router.push('/admin');
-      } else {
-        // Password does not match
-        handleFailedAttempt();
       }
     } else {
       handleFailedAttempt();

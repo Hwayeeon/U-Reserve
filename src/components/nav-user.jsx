@@ -56,6 +56,9 @@ export function NavUser({
   }
 
   async function logOut() {
+    await fetch("/api/logout", {
+      method: "GET",
+    })
     const d = new Date();
     d.setTime(d.getTime() - 1);
     let expireTime = d.toUTCString();

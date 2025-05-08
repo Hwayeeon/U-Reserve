@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server'
-import { decrypt } from "@/lib/crypt"
+import { decrypt, decryptRole } from "@/lib/crypt"
 
 export function middleware(request) {
   const role = request.cookies.get('role')?.value;
   const user = request.cookies.get('user')?.value;
   const decryptedUser = JSON.parse(decrypt(user));
-  const decryptedRole = decrypt(role, decryptedUser?.email, decryptedUser?.name)?.split(',')[0];
+  const decryptedRole = decryptRole(role, decryptedUser?.email, decryptedUser?.name);
   const url = request.nextUrl.clone();
   
   if (decryptedRole !== 'Student' && decryptedRole !== 'Admin' && url.pathname !== '/login') {
