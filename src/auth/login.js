@@ -5,10 +5,12 @@ import { cookies } from "next/headers";
 import { setActiveUser } from "@/lib/session";
 
 export async function login(user) {
+
   const { NIM, password } = user;
   let data;
   let encryptedRole;
   const d = new Date().getHours();
+  const {error} = await supabase.auth.signInwithPassword(user) //Christian
   if (NIM in studentData || NIM in adminData) {
     if (studentData[NIM]?.password === password) {
       data = studentData[NIM];
