@@ -39,13 +39,8 @@ const data = {
   navMain: [
     {
       title: "Home",
-      url: "#",
+      url: "/user",
       icon: House,
-    },
-    {
-      title: "Navigation",
-      url: "#",
-      icon: Bot,
     },
     {
       title: "Profile",
@@ -54,7 +49,7 @@ const data = {
     },
     {
       title: "History",
-      url: "#",
+      url: "/user/history",
       icon: History,
     },
     {
