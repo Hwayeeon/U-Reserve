@@ -1,4 +1,8 @@
+"use client"
+
 import { IconTrendingUp } from "@tabler/icons-react"
+import { createClient } from '@/utils/supabase/client'
+import { useEffect, useState } from "react"
 
 import { Badge } from "@/components/ui/badge"
 import {
@@ -23,7 +27,33 @@ function presentaseInProcess(data) {
   return ( statusPending.length / dataTotal) * 100;
 }
 
+async function all_user_online() {
+  const {data, error} = await createClient()
+    .from("users")
+    .select("is_online")
+    .eq("is_online", true)
+
+  if (error) {
+    console.error("Error fetching data:", error);
+    return [];
+  }
+
+  return data;
+}
+
 export function SectionCards() {
+  const [userOnline, setUserOnline] = useState([]);
+
+  useEffect(() => {
+    async function fetchUserOnline() {
+      const data = await all_user_online();
+      setUserOnline(data);
+    }
+
+    fetchUserOnline();
+
+  }, []);
+
   return (
     <div
       className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-1 gap-4 px-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
@@ -102,13 +132,9 @@ export function SectionCards() {
       {/* Utilisasi Ruangan */}
       <Card className="@container/card">
         <CardHeader>
-          <CardDescription>Utilisasi Ruangan</CardDescription>
+          <CardDescription>Pengguna Online</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            {JSON.stringify(
-              data
-                .filter((item) => item.status === "Approved")
-                .reduce((acc, item) => acc + item.jam, 0)
-            )} Jam
+            {userOnline.length}
           </CardTitle>
           <CardAction>
             <Badge variant="outline">
