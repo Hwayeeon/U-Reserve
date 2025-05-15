@@ -1,6 +1,7 @@
 "use client";
 
 import { createClient } from "@/utils/supabase/client";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import {
   Table,
