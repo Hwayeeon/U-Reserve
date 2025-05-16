@@ -64,12 +64,12 @@ const floors = {
   "Kampus 1": [
     {
       floorName: "Floor 1",
-      image: "/favicon.ico",
+      image: "/u (2).png",
       rooms: ["Room 101", "Room 102", "Room 103"],
     },
     {
       floorName: "Floor 2",
-      image: "/favicon.ico",
+      image: "/u (2).png",
       rooms: ["Room 201", "Room 202", "Room 203"],
     },
   ],

@@ -53,14 +53,14 @@ const data = {
       icon: History,
     },
     {
-      title: "About",
-      url: "#",
-      icon: Info,
-    },
-    {
       title: "FAQ",
       url: "/user/faq",
       icon: CircleHelp,
+    },
+    {
+      title: "About",
+      url: "#",
+      icon: Info,
     },
   ],
 }
