@@ -9,9 +9,10 @@ export async function updateSession(request) {
   const url = request.nextUrl.clone();
   const supabase = await createClient();
 
-  const { data } = await supabase.auth.getSession();
-
-  const role = data?.session?.user.user_metadata.role;
+  const { data } = await supabase.auth.getUser();
+  console.log('\n\nmiddleware.js\n', data?.user?.user_metadata, '\n\n');
+  // const role = data?.session?.user.user_metadata.role;
+  const role = data?.user?.user_metadata?.role;
 
   if (url.pathname !== 'login' && role !== 'admin' && role !== 'student') {
     url.pathname = '/login';

@@ -30,6 +30,9 @@ export async function login(credentials) {
   //   }
   // })
   // console.log('\nlogin\n', userData, userError);
+  if (error) {
+    return { status: 401, }
+  }
 
   const cookieStore = await cookies();
   const { data: userData, error: userError } = await supabase.auth.signInWithPassword({

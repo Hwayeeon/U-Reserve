@@ -43,6 +43,6 @@ export const config = {
      * - auth (authentication files)
      * Feel free to modify this pattern to include more paths.
      */
-    '/((?!_next/static|_next/image|auth|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/((?!_next/static|_next/image|auth|manifest.webmanifest|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 }
