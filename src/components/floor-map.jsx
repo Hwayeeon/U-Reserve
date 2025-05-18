@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { PopUp } from "./pop-up";
+import { getRoomReservation } from "@/lib/database";
 
 export function FloorMap({ className, floorObject, ...props }) {
   const svgRef = useRef(null);
@@ -9,6 +10,22 @@ export function FloorMap({ className, floorObject, ...props }) {
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
+  const [reservations, setReservations] = useState([]);
+
+  // Fetch reservation data when a room is selected and popup is shown
+  useEffect(() => {
+    const fetchReservations = async () => {
+      if (selectedRoom && showPopup) {
+        // You may need to map selectedRoom to roomId if needed
+        const data = await getRoomReservation({
+          roomId: selectedRoom,
+          date: new Date().toISOString().split("T")[0], // Use today's date
+        });
+        setReservations(data);
+      }
+    };
+    fetchReservations();
+  }, [selectedRoom, showPopup]);
 
   useEffect(() => {
     // Observe the container size and update dimensions
@@ -95,7 +112,19 @@ export function FloorMap({ className, floorObject, ...props }) {
         
         // Append the text to the SVG
         svgElement.appendChild(textElement);
-      }      
+      } else if (roomKey.startsWith("line") && room.type === "line") {
+        const lineElement = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        lineElement.setAttribute("x1", room.x1 * dimensions.width / floorObject.floorImage.originalX);
+        lineElement.setAttribute("y1", room.y1 * dimensions.height / floorObject.floorImage.originalY);
+        lineElement.setAttribute("x2", room.x2 * dimensions.width / floorObject.floorImage.originalX);
+        lineElement.setAttribute("y2", room.y2 * dimensions.height / floorObject.floorImage.originalY);
+        lineElement.setAttribute("stroke", "black");
+        lineElement.setAttribute("stroke-dasharray", "10,10");
+        lineElement.setAttribute("stroke-width", "2");
+        
+        // Append the line to the SVG
+        svgElement.appendChild(lineElement);
+      }
     });
   }, [floorObject, dimensions]);
 
@@ -112,14 +141,9 @@ export function FloorMap({ className, floorObject, ...props }) {
       />
       {showPopup && (
         <PopUp
+          floor={floorObject.floorName}
           roomName={selectedRoom}
-          reservations={[
-            { hour: "08:00 AM - 10:30 AM", status: "Open" },
-            { hour: "10:45 AM - 13:15 PM", status: "Closed" },
-            { hour: "13:30 PM - 16:00 PM", status: "Open" },
-            { hour: "16:15 PM - 18:45 PM", status: "Closed" },
-            { hour: "19:00 PM - 21:30 PM", status: "Open" },
-          ]}
+          reservations={reservations}
           onClose={() => setShowPopup(false)}
         />
       )}

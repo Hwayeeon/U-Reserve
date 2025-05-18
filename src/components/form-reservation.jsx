@@ -7,58 +7,98 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { useSearchParams } from "next/navigation"
+import { getRoomReservation, handleReservation } from "@/lib/database"
+import { getCookies } from "@/lib/cookies"
 
 // Dummy data
 // ini entar diambil dari supabase datanya
 const dummyData = {
-  floors: ["1st Floor", "2nd Floor", "3rd Floor", "4th Floor"],
+  floors: ["Floor 2", "Floor 3", "Floor 4", "Floor 5", "Floor 6", "Floor 7"],
   rooms: {
-    "1st Floor": ["A1", "A2", "A3", "A4", "A5"],
-    "2nd Floor": ["B1", "B2", "B3", "B4", "B5"],
-    "3rd Floor": ["C1", "C2", "C3", "C4", "C5"],
-    "4th Floor": ["D1", "D2", "D3", "D4", "D5"],
-  },
-
-  timeSlots: [
-    { hour: "08:00 AM - 10:30 AM", status: "Open" },
-    { hour: "10:45 AM - 13:15 PM", status: "Closed" },
-    { hour: "13:30 PM - 16:00 PM", status: "Open" },
-    { hour: "16:15 PM - 18:45 PM", status: "Closed" },
-    { hour: "19:00 PM - 21:30 PM", status: "Open" },
-  ],
-  currentUser: "Triemas Putra",
+    "Floor 2": ["ELEKTRO1", "ELEKTRO2", "ELEKTRO3", "ELEKTRO4", "INDUSTRI1", "INDUSTRI2", "INDUSTRI3", "JUNCTION"],
+    "Floor 3": ["E301", "E302", "E303", "E304", "E305", "E306", "E307", "E308", "E309", "E310"],
+    "Floor 4": ["A4COL1", "A4EMP2", "A4EMP1", "A4EPW2", "A4EPW1"],
+    "Floor 5": ["A5FAI1", "A5FAI2", "A5TRU2", "A5TRU1", "A505", "A506", "A507", "A508", "A5INS1"],
+    "Floor 6": ["A6AGI3", "A6AGI2", "A6AGI1", "A6AGI4", "A6INN1", "A6INN2", "A6INN3", "A6INN4", "A6PIO1", "A6PIO2", "A6PIO3"],
+    "Floor 7": ["A704", "A703", "A7DIS1", "A7DIS2", "A7GOA1", "A7GOA2", "A7GOA3", "A7RES1", "A7RES2", "A7RES3"],
+  }
 }
+const user = getCookies("user");
 
 const RoomReservationForm = () => {
+  const searchParams = useSearchParams();
+  const floorFromQuery = searchParams.get("floor") || "";
+  const roomNameFromQuery = searchParams.get("roomName") || "";
+  const timeSlotFromQuery = searchParams.get("timeSlot") || "";
+  const usernameFromQuery = searchParams.get("username") || user?.username || "";
+
   const [formData, setFormData] = useState({
-    floor: "",
-    roomName: "",
-    timeSlot: "",
-    borrowerName: dummyData.currentUser,
+    floor: floorFromQuery,
+    roomName: roomNameFromQuery,
+    timeSlot: timeSlotFromQuery,
+    borrowerName: usernameFromQuery,
     purpose: "",
-  })
+  });
 
-  const [availableRooms, setAvailableRooms] = useState([])
+  const [timeSlots, setTimeSlots] = useState([]);
+  const [selectedTimeSlotStatus, setSelectedTimeSlotStatus] = useState("AVAILABLE");
 
+  // Fetch timeslots from DB when roomName or floor changes
   useEffect(() => {
-    if (formData.floor) {
-      setAvailableRooms(dummyData.rooms[formData.floor] || [])
-      setFormData((prev) => ({ ...prev, roomName: "" }))
+    const fetchTimeSlots = async () => {
+      if (formData.roomName) {
+        const today = new Date().toISOString().split("T")[0];
+        const reservations = await getRoomReservation({
+          roomId: formData.roomName,
+          date: today,
+        });
+        // Example: reservations = [{ schedule: "08:00-09:00", status: "AVAILABLE" }, ...]
+        setTimeSlots(reservations || []);
+      } else {
+        setTimeSlots([]);
+      }
+      setFormData((prev) => ({ ...prev, timeSlot: "" }));
+      setSelectedTimeSlotStatus("AVAILABLE");
+    };
+    fetchTimeSlots();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData.roomName]);
+
+  // Update status when timeSlot changes
+  useEffect(() => {
+    if (formData.timeSlot && timeSlots.length > 0) {
+      const slot = timeSlots.find((t) => t.schedule === formData.timeSlot);
+      setSelectedTimeSlotStatus(slot?.status || "UNAVAILABLE");
     } else {
-      setAvailableRooms([])
+      setSelectedTimeSlotStatus("AVAILABLE");
     }
-  }, [formData.floor])
+  }, [formData.timeSlot, timeSlots]);
 
   // Fungsi untuk menghandle perubahan pada input form
   const handleChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }))
+    setFormData((prev) => ({ ...prev, [field]: value }));
+    if (field === "timeSlot") {
+      const slot = timeSlots.find((t) => t.schedule === value);
+      setSelectedTimeSlotStatus(slot?.status || "UNAVAILABLE");
+    }
   }
 
   const handleSubmit = (e) => {
-    e.preventDefault()
-    console.log("Form submitted:", formData)
-    // Diubah jadi logic untuk mengirim data ke supabase
-    alert("Reservation submitted successfully!")
+    e.preventDefault();
+    handleReservation({
+      roomId: formData.roomName,
+      date: new Date().toISOString().split("T")[0], // Use today's date
+      schedule: formData.timeSlot,
+      userId: user.user_id, // Assuming borrowerName is the user ID
+      reason: formData.purpose,
+    }).then((result) => {
+      if (result.success) {
+        alert("Reservation submitted successfully!");
+      } else {
+        alert("Failed to submit reservation.");
+      }
+    });
   }
 
   return (
@@ -73,7 +113,7 @@ const RoomReservationForm = () => {
             <Label htmlFor="floor">Floor</Label>
             <Select value={formData.floor} onValueChange={(value) => handleChange("floor", value)}>
               <SelectTrigger id="floor">
-                <SelectValue placeholder="Select a floor" />
+                <SelectValue placeholder="Select a floor">{formData.floor}</SelectValue>
               </SelectTrigger>
               <SelectContent>
                 {dummyData.floors.map((floor) => (
@@ -93,10 +133,10 @@ const RoomReservationForm = () => {
               disabled={!formData.floor}
             >
               <SelectTrigger id="roomName">
-                <SelectValue placeholder="Select a room" />
+                <SelectValue placeholder="Select a room">{formData.roomName}</SelectValue>
               </SelectTrigger>
               <SelectContent>
-                {availableRooms.map((room) => (
+                {(dummyData.rooms[formData.floor] || []).map((room) => (
                   <SelectItem key={room} value={room}>
                     {room}
                   </SelectItem>
@@ -107,17 +147,32 @@ const RoomReservationForm = () => {
 
           <div className="space-y-2">
             <Label htmlFor="timeSlot">Time Slot</Label>
-            <Select value={formData.timeSlot} onValueChange={(value) => handleChange("timeSlot", value)}>
+            <Select
+              value={formData.timeSlot}
+              onValueChange={(value) => handleChange("timeSlot", value)}
+              disabled={timeSlots.length === 0}
+            >
               <SelectTrigger id="timeSlot">
-                <SelectValue placeholder="Select a time slot" />
+                <SelectValue placeholder="Select a time slot">{formData.timeSlot}</SelectValue>
               </SelectTrigger>
               <SelectContent>
-                // ini entar diambil dari supabase datanya close sama opennya buat ditampilin di form
-                {dummyData.timeSlots.map((slot) => (
-                  <SelectItem key={slot.hour} value={slot.hour} disabled={slot.status === "Closed"}>
-                    {slot.hour} {slot.status === "Closed" ? "(Closed)" : ""}
+                {timeSlots.length === 0 ? (
+                  <SelectItem value="__no_timeslot__" disabled>
+                    No timeslots available
                   </SelectItem>
-                ))}
+                ) : (
+                  timeSlots.map((slot) => (
+                    <SelectItem
+                      key={slot.schedule}
+                      value={slot.schedule}
+                      disabled={slot.status === "RESERVED"}
+                    >
+                      <span className={slot.status !== "RESERVED" ? "text-green-600" : "text-red-500"}>
+                        {slot.schedule} - {slot.status}
+                      </span>
+                    </SelectItem>
+                  ))
+                )}
               </SelectContent>
             </Select>
           </div>
@@ -142,7 +197,13 @@ const RoomReservationForm = () => {
           <Button
             type="submit"
             className="w-full"
-            disabled={!formData.floor || !formData.roomName || !formData.timeSlot || !formData.purpose}
+            disabled={
+              !formData.floor ||
+              !formData.roomName ||
+              !formData.timeSlot ||
+              !formData.purpose ||
+              selectedTimeSlotStatus !== "AVAILABLE"
+            }
           >
             Submit Reservation
           </Button>
