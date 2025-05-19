@@ -28,7 +28,7 @@ export async function handleReservation(params) {
   .eq("date", params.date)
   .eq("schedule", params.schedule)
 
-  if (statusData[0]?.status) {
+  if (statusData[0]?.status === 'RESERVED') {
     return { success: false, error: "Room is already reserved for this time slot." };
   }
 
