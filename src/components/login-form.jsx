@@ -6,9 +6,9 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Link from "next/link";
 import { useRouter } from 'next/navigation'
-import studentData from '../data/dummy.json'
-import adminData from '../data/dummy2.json'
-import { encrypt } from "@/lib/crypt"
+// import studentData from '../data/dummy.json'
+// import adminData from '../data/dummy2.json'
+// import { encrypt } from "@/lib/crypt"
 import { useState } from "react"
 import { login } from "@/app/login/action"
 
@@ -35,31 +35,34 @@ export function LoginForm({
     const formData = new FormData(event.currentTarget);
     const NIM = formData.get('NIM');
     const password = formData.get('password');
-    login({user_id: NIM, password_hash: password});
-
     
-    
+    const response = await login({user_id: NIM, password_hash: password});
 
-    // function handleFailedAttempt() {
-    //   setFailedAttempts((prev) => {
-    //     const newCount = prev + 1;
-    //     if (newCount >= MAX_FAILED_ATTEMPTS) {
-    //       setIsLocked(true);
-    //     }
-    //     return newCount;
-    //   });
+    if (response.status === 401) {
+      handleFailedAttempt();
+      return;
+    }
 
-    //   // Clear any existing timeout and set a new one to reset the counter
-    //   if (resetTimeout) {
-    //     clearTimeout(resetTimeout);
-    //   }
-    //   setResetTimeout(setTimeout(() => {
-    //     setFailedAttempts(0);
-    //     setIsLocked(false);
-    //   }, 10 * 1000)); // 10 seconds lockout for demonstration purposes
+    function handleFailedAttempt() {
+      setFailedAttempts((prev) => {
+        const newCount = prev + 1;
+        if (newCount >= MAX_FAILED_ATTEMPTS) {
+          setIsLocked(true);
+        }
+        return newCount;
+      });
 
-    //   document.getElementById('error').classList.remove('hidden');
-    // }
+      // Clear any existing timeout and set a new one to reset the counter
+      if (resetTimeout) {
+        clearTimeout(resetTimeout);
+      }
+      setResetTimeout(setTimeout(() => {
+        setFailedAttempts(0);
+        setIsLocked(false);
+      }, 10 * 1000)); // 10 seconds lockout for demonstration purposes
+
+      document.getElementById('error').classList.remove('hidden');
+    }
 
     // const d = new Date();
     // d.setTime(d.getTime() + (60*60*1000));

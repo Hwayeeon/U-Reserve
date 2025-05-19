@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { AppSidebar } from "@/components/app-sidebar"
 import {
   Breadcrumb,
@@ -18,13 +18,14 @@ import {
 } from "@/components/ui/sidebar"
 import { ComingSoon } from "@/components/coming-soon"
 import Image from 'next/image'
+import floorPath from "@/data/path.json"
+import { FloorMap } from '@/components/floor-map'
 
 const tab = [
   { tab: 'Kampus 1', href: '#Kampus1'},
   { tab: 'Kampus 2', href: '#Kampus2'},
 ]
 
-import { useEffect } from "react";
 
 // Jadi ini function TImeDisplay untuk menampilkan waktu sesuai timezone dan locale yang diinginkan dan disini gw pake timezone Asia/Jakarta dan locale en-ID
 // dan gw pake useEffect untuk update waktu setiap detik kalo mau ubah intervalnya tinggal ganti di setInterval(updateTime, 1000) ke angka yang diinginkan
@@ -59,45 +60,30 @@ const TimeDisplay = ({ timeZone, locale = "en-GB" }) => {
   return <span>{currentTime}</span>;
 };
 
-// Dummy data for floors and rooms
-const floors = {
-  "Kampus 1": [
-    {
-      floorName: "Floor 1",
-      image: "/u (2).png",
-      rooms: ["Room 101", "Room 102", "Room 103"],
-    },
-    {
-      floorName: "Floor 2",
-      image: "/u (2).png",
-      rooms: ["Room 201", "Room 202", "Room 203"],
-    },
-  ],
-  "Kampus 2": [],
-}
-
 export default function Page() {
-  const [activeTab, setActiveTab] = useState("Kampus 1")
-  const [floorIndex, setFloorIndex] = useState(0)
+  const [activeTab, setActiveTab] = useState("Kampus 1");
+  const [floorIndex, setFloorIndex] = useState(0);
+
+  const floors = {
+    "Kampus 1": Object.keys(floorPath["Kampus 1"] || {}),
+    "Kampus 2": Object.keys(floorPath["Kampus 2"] || {}),
+  };
+
+  const currentFloorKey = floors[activeTab][floorIndex];
+  const currentFloor = floorPath[activeTab][currentFloorKey];
 
   function changeItems(e) {
-    setActiveTab(e.target.id)
-    setFloorIndex(0)
+    setActiveTab(e.target.id);
+    setFloorIndex(0);
   }
 
   function goPrevFloor() {
-    setFloorIndex((prev) =>
-      prev > 0 ? prev - 1 : floors[activeTab].length - 1
-    )
+    setFloorIndex((prev) => (prev > 0 ? prev - 1 : floors[activeTab].length - 1));
   }
 
   function goNextFloor() {
-    setFloorIndex((prev) =>
-      prev < floors[activeTab].length - 1 ? prev + 1 : 0
-    )
+    setFloorIndex((prev) => (prev < floors[activeTab].length - 1 ? prev + 1 : 0));
   }
-
-  const currentFloor = floors[activeTab][floorIndex]
 
   return (
     <SidebarProvider>
@@ -150,14 +136,15 @@ export default function Page() {
         ) : (
           <div id="content" className="flex-1 flex flex-col items-center gap-4 p-4 pt-0 min-h-min overflow-auto">
             <div className="text-lg text-center font-bold w-full">
-              {currentFloor.floorName}
+              {currentFloorKey}
             </div>
-            <div className="relative w-full max-w-lg h-1/2">
-                <Image
-                src={currentFloor.image}
-                fill
-                alt={currentFloor.floorName}
+            <div className="relative w-full max-w-lg h-full">
+              <FloorMap
                 className="w-full h-full object-contain border rounded"
+                floorObject={{
+                  floorName: currentFloorKey,
+                  floorImage: currentFloor,
+                }}
               />
               <button
                 onClick={goPrevFloor}
@@ -171,19 +158,6 @@ export default function Page() {
               >
                 &gt;
               </button>
-            </div>
-            <div className="flex flex-wrap gap-4 justify-center mt-4 w-full">
-              {currentFloor.rooms.map((room, idx) => (
-                <div
-                  key={idx}
-                  id={room}
-                  className="p-2 border rounded hover:shadow"
-                  onClick={() => alert(`You clicked on ${room}`)}
-                >
-                  {/* Change to pop-up later */}
-                  {room}
-                </div>
-              ))}
             </div>
           </div>
         )}
