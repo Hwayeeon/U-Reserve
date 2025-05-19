@@ -11,6 +11,10 @@ export async function POST(req) {
   } = await supabase.auth.getUser()
 
   if (user) {
+    await supabase
+    .from('users')
+    .update({ is_online: false })
+    .eq('user_id', user.user_metadata.user_id)
     await supabase.auth.signOut()
   }
 
