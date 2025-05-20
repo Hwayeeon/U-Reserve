@@ -111,9 +111,9 @@ export default function HistoryPage() {
   .sort((a, b) => {
     // Sort by order date
     if (sortDirection === "asc") {
-      return new Date(a.order_date).getTime() - new Date(b.order_date).getTime()
+      return new Date(a.date).getTime() - new Date(b.date).getTime()
     } else {
-      return new Date(b.order_date).getTime() - new Date(a.order_date).getTime()
+      return new Date(b.date).getTime() - new Date(a.date).getTime()
     }
   })
   
@@ -217,7 +217,7 @@ export default function HistoryPage() {
                         {reservation.room_id}
                         {/* <span className="ml-1 text-xs text-muted-foreground">({reservation.roomType})</span> */}
                       </TableCell>
-                      <TableCell>{format(reservation.order_date, "MMM dd, yyyy")}</TableCell>
+                      <TableCell>{format(reservation.date, "MMM dd, yyyy")}</TableCell>
                       <TableCell>{format(reservation.for_date, "MMM dd, yyyy")}</TableCell>
                       <TableCell>{getStatusBadge(reservation.status)}</TableCell>
                       <TableCell>

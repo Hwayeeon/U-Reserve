@@ -37,7 +37,7 @@ export async function getUserHistoryReservationData(params) {
   return data;
 }
 
-export async function getAllHistoryReservationData(params) {
+export async function getAllHistoryReservationData() {
   const supabase = await createClient();
 
   const { data, error } = await supabase
@@ -57,9 +57,9 @@ export async function handleReservation(params) {
   const { updateHistoryData, updateHistoryError } = await supabase
   .from('history')
   .update({
-    status: "Accepted",
+    status: params.status,
   })
-  .eq('room_id', params.roomId.toLowerCase())
+  .eq('room_id', params.roomId)
   .eq("date", params.date)
   .eq("schedule", params.schedule)
   .eq("user_id", params.userId)
@@ -79,7 +79,7 @@ export async function handleReservation(params) {
   .eq('room_id', params.roomId.toLowerCase())
   .eq("date", params.date)
   .eq("schedule", params.schedule)
-
+  console.log("Data:", data);
   if (error) {
     console.error("Error creating reservation:", error);
     return { success: false, error };
