@@ -55,14 +55,17 @@ const RoomReservationForm = () => {
         });
         // Example: reservations = [{ schedule: "08:00-09:00", status: "AVAILABLE" }, ...]
         setTimeSlots(reservations || []);
+        reservations.forEach((slot) => {
+          if (slot.schedule === formData.timeSlot && slot.status === "RESERVED") {
+            setFormData((prev) => ({ ...prev, timeSlot: "" }));
+          }
+        });
       } else {
         setTimeSlots([]);
       }
-      setFormData((prev) => ({ ...prev, timeSlot: "" }));
       setSelectedTimeSlotStatus("AVAILABLE");
     };
     fetchTimeSlots();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData.roomName]);
 
   // Update status when timeSlot changes

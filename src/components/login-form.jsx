@@ -41,6 +41,11 @@ export function LoginForm({
     if (response.status === 401) {
       handleFailedAttempt();
       return;
+    } else if (response.status === 500) {
+      console.log('There was an error on the server');
+      console.error('Server error');
+      handleFailedAttempt();
+      return;
     }
 
     function handleFailedAttempt() {
