@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { PopUp } from "./pop-up";
-import { getRoomReservation } from "@/lib/database";
+import { getRoomReservationData } from "@/lib/database";
 
 export function FloorMap({ className, floorObject, ...props }) {
   const svgRef = useRef(null);
@@ -17,7 +17,7 @@ export function FloorMap({ className, floorObject, ...props }) {
     const fetchReservations = async () => {
       if (selectedRoom && showPopup) {
         // You may need to map selectedRoom to roomId if needed
-        const data = await getRoomReservation({
+        const data = await getRoomReservationData({
           roomId: selectedRoom,
           date: new Date().toISOString().split("T")[0], // Use today's date
         });

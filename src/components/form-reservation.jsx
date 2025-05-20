@@ -8,8 +8,9 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { useSearchParams } from "next/navigation"
-import { getRoomReservation, handleReservation } from "@/lib/database"
+import { getRoomReservationData, submitRequest } from "@/lib/database"
 import { getCookies } from "@/lib/cookies"
+import { useRouter } from "next/navigation"
 
 // Dummy data
 // ini entar diambil dari supabase datanya
@@ -32,6 +33,7 @@ const RoomReservationForm = () => {
   const roomNameFromQuery = searchParams.get("roomName") || "";
   const timeSlotFromQuery = searchParams.get("timeSlot") || "";
   const usernameFromQuery = searchParams.get("username") || user?.username || "";
+  const [failedReservation, setFailedReservation] = useState("");
 
   const [formData, setFormData] = useState({
     floor: floorFromQuery,
@@ -49,13 +51,18 @@ const RoomReservationForm = () => {
     const fetchTimeSlots = async () => {
       if (formData.roomName) {
         const today = new Date().toISOString().split("T")[0];
-        const reservations = await getRoomReservation({
+        const reservations = await getRoomReservationData({
           roomId: formData.roomName,
           date: today,
         });
-        // Example: reservations = [{ schedule: "08:00-09:00", status: "AVAILABLE" }, ...]
-        setTimeSlots(reservations || []);
-        reservations.forEach((slot) => {
+        // status: true means AVAILABLE, otherwise RESERVED
+        const mappedSlots = (reservations || []).map(slot => ({
+          ...slot,
+          status: slot.status === true ? "AVAILABLE" : "RESERVED"
+        }));
+        setTimeSlots(mappedSlots);
+        console.log("Fetched time slots:", mappedSlots);
+        mappedSlots.forEach((slot) => {
           if (slot.schedule === formData.timeSlot && slot.status === "RESERVED") {
             setFormData((prev) => ({ ...prev, timeSlot: "" }));
           }
@@ -70,11 +77,12 @@ const RoomReservationForm = () => {
 
   // Update status when timeSlot changes
   useEffect(() => {
+    console.log("Selected time slot:", formData.timeSlot, timeSlots);
     if (formData.timeSlot && timeSlots.length > 0) {
       const slot = timeSlots.find((t) => t.schedule === formData.timeSlot);
-      setSelectedTimeSlotStatus(slot?.status || "UNAVAILABLE");
+      setSelectedTimeSlotStatus(slot?.status || "RESERVED");
     } else {
-      setSelectedTimeSlotStatus("AVAILABLE");
+      setSelectedTimeSlotStatus("RESERVED");
     }
   }, [formData.timeSlot, timeSlots]);
 
@@ -83,13 +91,14 @@ const RoomReservationForm = () => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     if (field === "timeSlot") {
       const slot = timeSlots.find((t) => t.schedule === value);
-      setSelectedTimeSlotStatus(slot?.status || "UNAVAILABLE");
+      setSelectedTimeSlotStatus(slot?.status || "RESERVED");
     }
   }
 
+  const router = useRouter();
   const handleSubmit = (e) => {
     e.preventDefault();
-    handleReservation({
+    submitRequest({
       roomId: formData.roomName,
       date: new Date().toISOString().split("T")[0], // Use today's date
       schedule: formData.timeSlot,
@@ -97,9 +106,10 @@ const RoomReservationForm = () => {
       reason: formData.purpose,
     }).then((result) => {
       if (result.success) {
-        alert("Reservation submitted successfully!");
+        router.push('/user/history');
       } else {
-        alert("Failed to submit reservation.");
+        setFailedReservation("Error submitting request: \n" + result.error);
+        document.getElementById('error').classList.remove('hidden');
       }
     });
   }
@@ -168,9 +178,9 @@ const RoomReservationForm = () => {
                     <SelectItem
                       key={slot.schedule}
                       value={slot.schedule}
-                      disabled={slot.status === "RESERVED"}
+                      disabled={!slot.status}
                     >
-                      <span className={slot.status !== "RESERVED" ? "text-green-600" : "text-red-500"}>
+                      <span className={slot.status === "AVAILABLE" ? "text-green-600" : "text-red-500"}>
                         {slot.schedule} - {slot.status}
                       </span>
                     </SelectItem>
@@ -205,12 +215,15 @@ const RoomReservationForm = () => {
               !formData.roomName ||
               !formData.timeSlot ||
               !formData.purpose ||
-              selectedTimeSlotStatus !== "AVAILABLE"
+              selectedTimeSlotStatus === "RESERVED"
             }
           >
             Submit Reservation
           </Button>
         </CardFooter>
+        <div id="error" className="text-red-500 text-sm hidden">
+          {failedReservation || "Failed to submit reservation. Please try again."}
+        </div>
       </form>
     </Card>
   )
