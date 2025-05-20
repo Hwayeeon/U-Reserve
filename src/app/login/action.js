@@ -14,6 +14,10 @@ export async function login(credentials) {
   .eq('user_id', credentials['user_id'])
   .single();
 
+  if (error) {
+    // user_id not found in database
+    return { status: 401, }
+  }
   // Sign-up user
   // const { data:userData, error:userError } = await supabase.auth.signUp({
   //   email: user.email,

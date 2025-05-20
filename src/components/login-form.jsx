@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Link from "next/link";
-import { useRouter } from 'next/navigation'
+// import { useRouter } from 'next/navigation'
 // import studentData from '../data/dummy.json'
 // import adminData from '../data/dummy2.json'
 // import { encrypt } from "@/lib/crypt"
@@ -21,7 +21,7 @@ export function LoginForm({
   className,
   ...props
 }) {
-  const router = useRouter()
+  // const router = useRouter()
   const [failedAttempts, setFailedAttempts] = useState(0);
   const [isLocked, setIsLocked] = useState(false);
   const [resetTimeout, setResetTimeout] = useState(null);
