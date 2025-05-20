@@ -7,7 +7,7 @@ export async function getRoomReservationData(params) {
   const { data, error } = await supabase
   .from('rooms')
   .select('*')
-  .eq('room_id', params.roomId.toLowerCase())
+  .eq('room_name', params.roomName)
   .eq("date", params.date)
 
   if (error) {
@@ -52,6 +52,7 @@ export async function getAllHistoryReservationData() {
 }
 
 export async function handleReservation(params) {
+  console.log("Handling reservation:", params);
   const supabase = await createClient();
 
   const { updateHistoryData, updateHistoryError } = await supabase
@@ -59,32 +60,31 @@ export async function handleReservation(params) {
   .update({
     status: params.status,
   })
-  .eq('room_id', params.roomId)
-  .eq("date", params.date)
-  .eq("schedule", params.schedule)
-  .eq("user_id", params.userId)
+  .eq('history_id', params.historyId)
 
   if (updateHistoryError) {
     console.error("Error updating history:", updateHistoryError);
     return { success: false, error: updateHistoryError };
   }
 
-  const { data, error } = await supabase
-  .from('rooms')
-  .update({
-    status: false,
-    user_id: params.userId,
-    reason: params.reason,
-  })
-  .eq('room_id', params.roomId.toLowerCase())
-  .eq("date", params.date)
-  .eq("schedule", params.schedule)
-  console.log("Data:", data);
-  if (error) {
-    console.error("Error creating reservation:", error);
-    return { success: false, error };
+  if (params.status === "Accepted") {
+    const { data, error } = await supabase
+    .from('rooms')
+    .update({
+      status: false,
+      history_id: params.historyId,
+    })
+    .eq('room_name', params.roomName)
+    .eq("date", params.for_date)
+    .eq("schedule", params.schedule)
+
+    if (error) {
+      console.error("Error updating room status:", error);
+      return { success: false, error };
+    }
+    return { success: true, data };
   }
-  return { success: true, data };
+  return { success: true, updateHistoryData };
 }
 
 export async function submitRequest(params) {
@@ -93,7 +93,7 @@ export async function submitRequest(params) {
   const { data: statusData } = await supabase
   .from('rooms')
   .select('status')
-  .eq('room_id', params.roomId.toLowerCase())
+  .eq('room_name', params.roomName)
   .eq("date", params.date)
   .eq("schedule", params.schedule)
 
@@ -106,8 +106,8 @@ export async function submitRequest(params) {
     .insert([
       {
         user_id: params.userId,
-        room_id: params.roomId,
-        date: params.date,
+        room_name: params.roomName,
+        order_date: params.date,
         schedule: params.schedule,
         reason: params.reason,
         status: "Pending",

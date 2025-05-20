@@ -18,7 +18,7 @@ export function FloorMap({ className, floorObject, ...props }) {
       if (selectedRoom && showPopup) {
         // You may need to map selectedRoom to roomId if needed
         const data = await getRoomReservationData({
-          roomId: selectedRoom,
+          roomName: selectedRoom,
           date: new Date().toISOString().split("T")[0], // Use today's date
         });
         setReservations(data);

@@ -52,7 +52,7 @@ const RoomReservationForm = () => {
       if (formData.roomName) {
         const today = new Date().toISOString().split("T")[0];
         const reservations = await getRoomReservationData({
-          roomId: formData.roomName,
+          roomName: formData.roomName,
           date: today,
         });
         // status: true means AVAILABLE, otherwise RESERVED
@@ -99,7 +99,7 @@ const RoomReservationForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     submitRequest({
-      roomId: formData.roomName,
+      roomName: formData.roomName,
       date: new Date().toISOString().split("T")[0], // Use today's date
       schedule: formData.timeSlot,
       userId: user.user_id, // Assuming borrowerName is the user ID

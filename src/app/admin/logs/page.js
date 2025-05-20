@@ -33,13 +33,32 @@ export default function ReservationsPage() {
     console.log("Reservation:", reservation);
     setLoading(true);
     await handleReservation({
-      roomId: reservation.room_id,
-      userId: reservation.user_id,
-      date: reservation.date,
+      roomName: reservation.room_name,
       schedule: reservation.schedule,
       status: action === "approve" ? "Accepted" : "Rejected",
-    }).then((response) => {
+      historyId: reservation.history_id,
+      for_date: reservation.for_date,
+    }).then(async (response) => {
       if (response.success) {
+        const updatedData = await getAllHistoryReservationData();
+          if (updatedData) {
+            updatedData.map(async (updateReservation) => {
+              console.log("Update Reservation:", updateReservation.room_name === reservation.room_name);
+              if (updateReservation.room_name === reservation.room_name &&
+                updateReservation.for_date === reservation.for_date &&
+                updateReservation.schedule === reservation.schedule) {
+                if (updateReservation.history_id !== reservation.history_id) {
+                  await handleReservation({
+                    roomName: updateReservation.room_name,
+                    schedule: updateReservation.schedule,
+                    status: "Rejected",
+                    historyId: updateReservation.history_id,
+                    for_date: updateReservation.for_date,
+                  });
+                }
+              }
+            });
+          }
         alert(`Reservation ${action === "approve" ? "approved" : "rejected"} successfully.`);
       } else {
         alert("Error updating reservation.");
@@ -109,7 +128,7 @@ export default function ReservationsPage() {
                       reservations.map((reservation) => (
                         <TableRow key={reservation.history_id}>
                           <TableCell className="font-medium">{reservation.history_id.split("-")[0]}</TableCell>
-                          <TableCell>{reservation.room_id}</TableCell>
+                          <TableCell>{reservation.room_name}</TableCell>
                           <TableCell>{reservation.user_id}</TableCell>
                           <TableCell>{reservation.schedule}</TableCell>
                           <TableCell>{format(reservation.for_date || reservation.date, "MMM dd, yyyy")}</TableCell>
