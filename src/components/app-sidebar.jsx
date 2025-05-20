@@ -44,7 +44,7 @@ const data = {
     },
     {
       title: "Profile",
-      url: "#",
+      url: "/user/profile",
       icon: UserPen,
     },
     {
@@ -59,7 +59,7 @@ const data = {
     },
     {
       title: "About",
-      url: "#",
+      url: "/user/about",
       icon: Info,
     },
   ],

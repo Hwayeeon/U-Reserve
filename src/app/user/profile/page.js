@@ -8,10 +8,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { AppSidebar } from "@/components/app-sidebar"
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar"
+import { getCookies } from "@/lib/cookies"
 
 export default function ProfilePage() {
   const [profileImage, setProfileImage] = useState("/placeholder.svg?height=120&width=120")
-  const [isPopupOpen, setIsPopupOpen] = useState(false)
+  // const [isPopupOpen, setIsPopupOpen] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const fileInputRef = useRef(null)
   const [isClient, setIsClient] = useState(false);
@@ -23,6 +24,8 @@ export default function ProfilePage() {
   if (!isClient) {
     return null; // Prevent rendering on the server
   }
+  
+  const user = getCookies("user");
   
   const handleImageChange = (e) => {
     const file = e.target.files?.[0]
@@ -57,8 +60,8 @@ export default function ProfilePage() {
                     className="w-32 h-32 border-4 border-white shadow-md cursor-pointer transition-transform hover:scale-105"
                     onClick={() => setIsPopupOpen(true)}
                   >
-                    <AvatarImage src={profileImage || "/placeholder.svg"} alt="Profile" />
-                    <AvatarFallback className="text-2xl">JD</AvatarFallback>
+                    <AvatarImage src={user.avatar || profileImage} alt="Profile" />
+                    <AvatarFallback className="text-2xl">Alien</AvatarFallback>
                   </Avatar>
                 </div>
                 <input type="file" accept="image/*" ref={fileInputRef} onChange={handleImageChange} className="hidden" />
@@ -69,14 +72,14 @@ export default function ProfilePage() {
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Name</label>
                     <div className="relative">
-                      <Input type="text" value="DUMMY NAME" readOnly className="pr-10 bg-gray-50" />
+                      <Input type="text" value={user.username || "ALIEN"} readOnly className="pr-10 bg-gray-50" />
                     </div>
                   </div>
 
                   <div className="space-y-2">
                     <label className="text-sm font-medium">NIM</label>
                     <div className="relative">
-                      <Input type="text" value="123456789" readOnly className="pr-10 bg-gray-50" />
+                      <Input type="text" value={user.user_id || "000000000"} readOnly className="pr-10 bg-gray-50" />
                     </div>
                   </div>
 
@@ -85,7 +88,7 @@ export default function ProfilePage() {
                     <div className="relative">
                       <Input
                         type={showPassword ? "text" : "password"}
-                        value="password123"
+                        value="ureserve2025"
                         readOnly
                         className="pr-10 bg-gray-50"
                       />
@@ -108,7 +111,7 @@ export default function ProfilePage() {
             </Card>
 
             {/* Image Popup */}
-            {isPopupOpen && (
+            {/* {isPopupOpen && (
               <div
                 className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4 backdrop-blur-sm"
                 onClick={() => setIsPopupOpen(false)}
@@ -122,7 +125,7 @@ export default function ProfilePage() {
                   </div>
                 </div>
               </div>
-            )}
+            )} */}
           </div>
         </SidebarInset>
       </div>
