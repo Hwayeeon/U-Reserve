@@ -30,7 +30,6 @@ export default function ReservationsPage() {
 
   // Approve or reject reservation
   const handleAction = async (reservation, action) => {
-    console.log("Reservation:", reservation);
     setLoading(true);
     await handleReservation({
       roomName: reservation.room_name,
@@ -43,18 +42,19 @@ export default function ReservationsPage() {
         const updatedData = await getAllHistoryReservationData();
           if (updatedData) {
             updatedData.map(async (updateReservation) => {
-              console.log("Update Reservation:", updateReservation.room_name === reservation.room_name);
-              if (updateReservation.room_name === reservation.room_name &&
-                updateReservation.for_date === reservation.for_date &&
-                updateReservation.schedule === reservation.schedule) {
-                if (updateReservation.history_id !== reservation.history_id) {
-                  await handleReservation({
-                    roomName: updateReservation.room_name,
-                    schedule: updateReservation.schedule,
-                    status: "Rejected",
-                    historyId: updateReservation.history_id,
-                    for_date: updateReservation.for_date,
-                  });
+              if (updateReservation.status === "Pending") {
+                if (updateReservation.room_name === reservation.room_name &&
+                  updateReservation.for_date === reservation.for_date &&
+                  updateReservation.schedule === reservation.schedule) {
+                  if (updateReservation.history_id !== reservation.history_id) {
+                    await handleReservation({
+                      roomName: updateReservation.room_name,
+                      schedule: updateReservation.schedule,
+                      status: "Rejected",
+                      historyId: updateReservation.history_id,
+                      for_date: updateReservation.for_date,
+                    });
+                  }
                 }
               }
             });

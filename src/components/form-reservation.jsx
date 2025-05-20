@@ -61,7 +61,6 @@ const RoomReservationForm = () => {
           status: slot.status === true ? "AVAILABLE" : "RESERVED"
         }));
         setTimeSlots(mappedSlots);
-        console.log("Fetched time slots:", mappedSlots);
         mappedSlots.forEach((slot) => {
           if (slot.schedule === formData.timeSlot && slot.status === "RESERVED") {
             setFormData((prev) => ({ ...prev, timeSlot: "" }));
@@ -77,7 +76,6 @@ const RoomReservationForm = () => {
 
   // Update status when timeSlot changes
   useEffect(() => {
-    console.log("Selected time slot:", formData.timeSlot, timeSlots);
     if (formData.timeSlot && timeSlots.length > 0) {
       const slot = timeSlots.find((t) => t.schedule === formData.timeSlot);
       setSelectedTimeSlotStatus(slot?.status || "RESERVED");
