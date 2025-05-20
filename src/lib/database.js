@@ -22,7 +22,22 @@ export async function getRoomReservationData(params) {
   });
 }
 
-export async function getHistoryReservationData(params) {
+export async function getUserHistoryReservationData(params) {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+  .from('history')
+  .select('*')
+  .eq('user_id', params.userId)
+
+  if (error) {
+    console.error("Error fetching reservation history:", error);
+    return [];
+  }
+  return data;
+}
+
+export async function getAllHistoryReservationData(params) {
   const supabase = await createClient();
 
   const { data, error } = await supabase
@@ -30,10 +45,9 @@ export async function getHistoryReservationData(params) {
   .select('*')
 
   if (error) {
-    console.error("Error fetching reservation history:", error);
+    console.error("Error fetching all reservation history:", error);
     return [];
   }
-
   return data;
 }
 
