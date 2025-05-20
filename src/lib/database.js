@@ -111,7 +111,7 @@ export async function submitRequest(params) {
         schedule: params.schedule,
         reason: params.reason,
         status: "Pending",
-        for_date: new Date().toISOString().split("T")[0],
+        for_date: params.date,
       },
     ]);
 
