@@ -214,7 +214,7 @@ export default function HistoryPage() {
                     <TableRow key={reservation.history_id}>
                       <TableCell className="font-medium">{reservation.history_id.split("-")[0]}</TableCell>
                       <TableCell>
-                        {reservation.room_id}
+                        {reservation.room_name}
                         {/* <span className="ml-1 text-xs text-muted-foreground">({reservation.roomType})</span> */}
                       </TableCell>
                       <TableCell>{format(reservation.order_date, "MMM dd, yyyy")}</TableCell>
