@@ -1,3 +1,4 @@
+// "use client"
 import { AppSidebar } from "@/components/app-sidebar-admin"
 import { ChartAreaInteractive } from "@/components/chart-area-interactive"
 import { DataTable } from "@/components/data-table"
@@ -7,10 +8,19 @@ import {
   SidebarInset,
   SidebarProvider,
 } from "@/components/ui/sidebar"
-
+// import { useEffect, useState } from "react"
+// import { getAllHistoryReservationData } from "@/lib/database"
 import data from "@/data/data.json"
 
 export default function Page() {
+  // const [data, setData] = useState([])
+  // useEffect(() => {
+  //     const fetchData = async () => {
+  //       const data = await getAllHistoryReservationData()
+  //       setData(data)
+  //     }
+  //     fetchData()
+  // }, [])
   return (
     <SidebarProvider
       style={

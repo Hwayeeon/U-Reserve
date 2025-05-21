@@ -39,10 +39,12 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation"
 
 export function NavUser({
   user
 }) {
+  const router = useRouter();
   const { isMobile } = useSidebar()
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false)
   const [isClient, setIsClient] = useState(false);
@@ -68,7 +70,7 @@ export function NavUser({
       const name = eqPos > -1 ? cookie.substring(0, eqPos) : cookie;
       document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT';
     });
-    window.location.reload();
+    router.push('/login');
   }
 
   return (

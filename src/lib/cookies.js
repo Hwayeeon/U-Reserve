@@ -18,11 +18,11 @@ export function getCookies(name) {
     catch (error) {
         if (name === 'user') {
             return {
-                "name":"alien",
+                "user_id":"0000",
+                "username":"alien",
                 "email":"alien@civitas.ukrida.ac.id",
                 "prodi":"Pengetahuan Galaxy",
-                "role":"admin",
-                "password":"ureserve2025",
+                "role":"student",
                 "avatar":"https://i1.sndcdn.com/artworks-ACVdFsOSQyupQv3b-UkcUtA-t500x500.png"
             };
         }

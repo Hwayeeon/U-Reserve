@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { PopUp } from "./pop-up";
-import { getRoomReservation } from "@/lib/database";
+import { getRoomReservationData } from "@/lib/database";
 
 export function FloorMap({ className, floorObject, ...props }) {
   const svgRef = useRef(null);
@@ -17,8 +17,8 @@ export function FloorMap({ className, floorObject, ...props }) {
     const fetchReservations = async () => {
       if (selectedRoom && showPopup) {
         // You may need to map selectedRoom to roomId if needed
-        const data = await getRoomReservation({
-          roomId: selectedRoom,
+        const data = await getRoomReservationData({
+          roomName: selectedRoom,
           date: new Date().toISOString().split("T")[0], // Use today's date
         });
         setReservations(data);
@@ -67,7 +67,7 @@ export function FloorMap({ className, floorObject, ...props }) {
         pathElement.setAttribute("stroke", "black");
         pathElement.setAttribute("stroke-width", "5");
         pathElement.setAttribute("stroke-linecap", "round");
-        pathElement.setAttribute("fill", "blue");
+        pathElement.setAttribute("fill", "rgba(211, 211, 211, 0.8)");
         pathElement.style.transition = "all 0.2s ease";
 
         // Apply scaling and translation
@@ -82,7 +82,7 @@ export function FloorMap({ className, floorObject, ...props }) {
         });
 
         pathElement.addEventListener("mouseleave", () => {
-          pathElement.setAttribute("fill", "blue");
+          pathElement.setAttribute("fill", "rgba(211, 211, 211, 0.8)");
         });
 
         if (room.clickable === "true") {
