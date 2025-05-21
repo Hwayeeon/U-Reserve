@@ -50,12 +50,12 @@ export function PopUp({ floor, roomName, reservations, onClose }) {
                   <p className="text-lg font-medium">{reservation.schedule}</p>
                   <p
                     className={`text-sm ${
-                      reservation.status === "AVAILABLE"
+                      reservation.status
                         ? "text-green-500"
                         : "text-red-500"
                     }`}
                   >
-                    {reservation.status}
+                    {reservation.status ? "Available" : "Reserved"}
                   </p>
                 </div>
                 <Link
@@ -73,11 +73,11 @@ export function PopUp({ floor, roomName, reservations, onClose }) {
                 >
                   <button
                     className={`px-4 py-2 rounded ${
-                      reservation.status === "AVAILABLE"
+                      reservation.status
                         ? "bg-blue-500 text-white hover:bg-blue-600"
                         : "bg-gray-300 text-gray-500 cursor-not-allowed"
                     }`}
-                    disabled={reservation.status !== "AVAILABLE"}
+                    disabled={!reservation.status}
                   >
                     Reserve
                   </button>

@@ -62,7 +62,7 @@ const data = {
     },
     {
       title: "Logs",
-      url: "/logs",
+      url: "/admin/logs",
       icon: ClipboardListIcon,
     },
     {

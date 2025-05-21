@@ -6,6 +6,7 @@ import Image from "next/image"
 import { Calendar, Clock, Shield, Users } from "lucide-react"
 import { AppSidebar } from "@/components/app-sidebar"
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar"
+import { Instagram, Github } from "lucide-react"
 
 export default function AboutPage() {
   useEffect(() => {
@@ -29,11 +30,11 @@ export default function AboutPage() {
   }, [])
 
   const developers = [
-    { name: "Triemas Putra", NIM: "412024018" },
-    { name: "Davidson Rafael", NIM: "412024030" },
-    { name: "Christian", NIM: "412024013" },
-    { name: "Austin Jeremiah", NIM: "412024020" },
-    { name: "Michael Timothy", NIM: "412024023" },
+    { name: "Triemas Putra", NIM: "412024018", avatar: "/developers/triemas.png", git: "https://github.com/TriemasPutra", ig: "https://instagram.com/triemasputra" },
+    { name: "Davidson Rafael", NIM: "412024030", avatar: "/developers/davidson.png", git: "https://github.com/Hwayeeon", ig: "https://www.instagram.com/davidsonrafael_" },
+    { name: "Christian", NIM: "412024013", avatar: "/developers/christian.jpeg", git: "https://github.com/IanGametion", ig: "https://instagram.com/ian_gamation" },
+    { name: "Austin Jeremiah", NIM: "412024020", avatar: "/developers/austin.png", git: "https://github.com/cozyre", ig: "https://instagram.com/austinjk.h" },
+    { name: "Michael Timothy", NIM: "412024023", avatar: "/developers/michael.png", git: "https://github.com/Mickeytb", ig: "https://instagram.com/mickeyt.b" },
   ]
 
   return (
@@ -166,14 +167,35 @@ export default function AboutPage() {
                       key={index}
                       className="bg-gray-100 p-6 rounded-lg shadow-md flex flex-col items-center text-center hover:shadow-lg transition-shadow"
                     >
-                      <div className="mb-4 w-20 h-20 bg-gradient-to-br from-[#FFD700] to-[#0047AB] rounded-full flex items-center justify-center text-white text-2xl font-bold">
+                      {/* <div className="mb-4 w-20 h-20 bg-gradient-to-br from-[#FFD700] to-[#0047AB] rounded-full flex items-center justify-center text-white text-2xl font-bold">
                         {dev.name.charAt(0)}
-                      </div>
+                      </div> */}
+                      <img src={dev.avatar} alt={dev.name} className="mb-4 w-20 h-20 rounded-full" />
                       <h3 className="mb-1 text-lg font-semibold text-gray-800">{dev.name}</h3>
                       <p className="text-sm text-gray-700">{dev.NIM}</p>
                       <div className="mt-4 flex space-x-3">
-                        <a href="#" className="text-gray-400 hover:text-[#0047AB] colors"></a>
-                        <a href="#" className="text-gray-400 hover:text-[#0047AB] colors"></a>
+                        <a
+                          href={dev.git}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-gray-400 hover:text-[#0047AB] colors"
+                          onClick={e => e.stopPropagation()}
+                          title="GitHub"
+                        >
+                          <span className="sr-only">GitHub</span>
+                          <Github />
+                        </a>
+                        <a
+                          href={dev.ig}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-gray-400 hover:text-pink-500 colors"
+                          onClick={e => e.stopPropagation()}
+                          title="Instagram"
+                        >
+                          <span className="sr-only">Instagram</span>
+                          <Instagram />
+                        </a>
                       </div>
                     </div>
                   ))}
