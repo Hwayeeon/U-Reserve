@@ -67,7 +67,7 @@ export function FloorMap({ className, floorObject, ...props }) {
         pathElement.setAttribute("stroke", "black");
         pathElement.setAttribute("stroke-width", "5");
         pathElement.setAttribute("stroke-linecap", "round");
-        pathElement.setAttribute("fill", "blue");
+        pathElement.setAttribute("fill", "rgba(211, 211, 211, 0.8)");
         pathElement.style.transition = "all 0.2s ease";
 
         // Apply scaling and translation
@@ -82,7 +82,7 @@ export function FloorMap({ className, floorObject, ...props }) {
         });
 
         pathElement.addEventListener("mouseleave", () => {
-          pathElement.setAttribute("fill", "blue");
+          pathElement.setAttribute("fill", "rgba(211, 211, 211, 0.8)");
         });
 
         if (room.clickable === "true") {
