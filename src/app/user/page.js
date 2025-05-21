@@ -113,15 +113,17 @@ export default function Page() {
         </header>
 
         {/* Tabs */}
-        <div className="flex flex-1 flex-row gap-4 p-4 pt-0 max-h-max">
+        <div className="flex flex-row gap-4 p-4 pt-0">
           {tab.map((item) => (
             <a
               onClick={changeItems}
               id={item.tab}
               key={item.tab}
               href={item.href}
-              className={`inline-block w-1/2 text-center text-sm/6 font-semibold text-gray-900 h-max px-2 py-1 rounded-md
-                ${activeTab === item.tab ? 'bg-gray-200 shadow-md' : 'hover:bg-gray-100'}`}
+              className={`flex-1 flex items-center justify-center text-sm font-semibold text-gray-900 px-2 py-2 rounded-md transition-all
+                ${activeTab === item.tab ? 'bg-gray-200 shadow-md' : 'hover:bg-gray-100'}
+                h-10 select-none`}
+              style={{ minWidth: 0 }}
             >
               {item.tab}
             </a>
