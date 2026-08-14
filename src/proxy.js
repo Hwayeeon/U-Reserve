@@ -28,7 +28,7 @@
 
 import { updateSession } from '@/utils/supabase/middleware'
 
-export async function middleware(request) {
+export async function proxy(request) {
   // update user's auth session
   return await updateSession(request)
 }
