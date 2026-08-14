@@ -10,7 +10,7 @@ We release patches for security vulnerabilities. Which versions are eligible for
 
 ## Reporting a Vulnerability
 
-If you find a security vulnerability, please report it to us via [email](mailto:yoonakim320@gmail.com). We will respond as quickly as possible to address the issue.
+If you find a security vulnerability, please report it to us via [email](mailto:davidson.rafael120@gmail.com). We will respond as quickly as possible to address the issue.
 
 Please include as much information as possible to help us resolve the issue quickly, including:
 
