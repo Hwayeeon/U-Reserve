@@ -1,6 +1,6 @@
 "use client";
 
-import { Camera, Eye, EyeOff, X } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { AppSidebar } from "@/components/app-sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -14,7 +14,6 @@ export default function ProfilePage() {
 	const [profileImage, setProfileImage] = useState(
 		"/placeholder.svg?height=120&width=120",
 	);
-	// const [isPopupOpen, setIsPopupOpen] = useState(false)
 	const [showPassword, setShowPassword] = useState(false);
 	const fileInputRef = useRef(null);
 	const [isClient, setIsClient] = useState(false);
@@ -60,7 +59,7 @@ export default function ProfilePage() {
 								<div className="relative group">
 									<Avatar
 										className="w-32 h-32 border-4 border-white shadow-md cursor-pointer transition-transform hover:scale-105"
-										onClick={() => setIsPopupOpen(true)}
+										onClick={() => fileInputRef.current?.click()}
 									>
 										<AvatarImage
 											src={user.avatar || profileImage}
@@ -83,9 +82,15 @@ export default function ProfilePage() {
 							<CardContent className="p-6">
 								<div className="space-y-4">
 									<div className="space-y-2">
-										<label className="text-sm font-medium">Name</label>
+										<label
+											htmlFor="profile-name"
+											className="text-sm font-medium"
+										>
+											Name
+										</label>
 										<div className="relative">
 											<Input
+												id="profile-name"
 												type="text"
 												value={user.username || "ALIEN"}
 												readOnly
@@ -95,9 +100,15 @@ export default function ProfilePage() {
 									</div>
 
 									<div className="space-y-2">
-										<label className="text-sm font-medium">NIM</label>
+										<label
+											htmlFor="profile-nim"
+											className="text-sm font-medium"
+										>
+											NIM
+										</label>
 										<div className="relative">
 											<Input
+												id="profile-nim"
 												type="text"
 												value={user.user_id || "000000000"}
 												readOnly
@@ -107,9 +118,15 @@ export default function ProfilePage() {
 									</div>
 
 									<div className="space-y-2">
-										<label className="text-sm font-medium">Password</label>
+										<label
+											htmlFor="profile-password"
+											className="text-sm font-medium"
+										>
+											Password
+										</label>
 										<div className="relative">
 											<Input
+												id="profile-password"
 												type={showPassword ? "text" : "password"}
 												value="ureserve2025"
 												readOnly
@@ -132,23 +149,6 @@ export default function ProfilePage() {
 								</div>
 							</CardContent>
 						</Card>
-
-						{/* Image Popup */}
-						{/* {isPopupOpen && (
-              <div
-                className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4 backdrop-blur-sm"
-                onClick={() => setIsPopupOpen(false)}
-              >
-                <div
-                  className="relative bg-white rounded-lg shadow-xl overflow-hidden max-w-lg w-full"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  
-                  <div className="p-4 bg-white flex justify-between">
-                  </div>
-                </div>
-              </div>
-            )} */}
 					</div>
 				</SidebarInset>
 			</div>

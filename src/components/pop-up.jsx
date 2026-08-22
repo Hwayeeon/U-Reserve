@@ -1,5 +1,6 @@
 "use client";
 
+import { X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { getCookies } from "@/lib/cookies";
@@ -19,6 +20,8 @@ export function PopUp({ floor, roomName, reservations, onClose }) {
 	const user = getCookies("user");
 
 	return (
+		// biome-ignore lint/a11y/noStaticElementInteractions: mouse-only convenience; the close button below is the keyboard-accessible path
+		// biome-ignore lint/a11y/useKeyWithClickEvents: mouse-only convenience; the close button below is the keyboard-accessible path
 		<div
 			className="fixed inset-0 flex items-center justify-center z-50"
 			style={{
@@ -26,12 +29,23 @@ export function PopUp({ floor, roomName, reservations, onClose }) {
 			}}
 			onClick={onClose} // Close pop-up when clicking outside
 		>
+			{/* biome-ignore lint/a11y/noStaticElementInteractions: stops propagation so backdrop click doesn't close the dialog */}
+			{/* biome-ignore lint/a11y/useKeyWithClickEvents: stops propagation so backdrop click doesn't close the dialog */}
 			<div
 				className="bg-white rounded-lg shadow-lg w-3/4 max-w-4xl p-6"
 				onClick={(e) => e.stopPropagation()}
 			>
-				{/* Room Name */}
-				<h2 className="text-2xl font-bold text-center mb-4">{roomName}</h2>
+				<div className="flex items-center justify-between mb-4">
+					<h2 className="text-2xl font-bold">{roomName}</h2>
+					<button
+						type="button"
+						onClick={onClose}
+						aria-label="Close"
+						className="text-gray-500 hover:text-gray-800"
+					>
+						<X className="h-5 w-5" />
+					</button>
+				</div>
 
 				<div className="flex flex-col md:flex-row gap-6">
 					{/* Calendar Component */}
@@ -41,9 +55,9 @@ export function PopUp({ floor, roomName, reservations, onClose }) {
 
 					{/* Reservation Status */}
 					<div className="md:w-1/2 w-full pl-0 md:pl-4">
-						{reservations.map((reservation, index) => (
+						{reservations.map((reservation) => (
 							<div
-								key={index}
+								key={reservation.schedule}
 								className="flex items-center justify-between mb-4 border-b pb-2"
 							>
 								<div>
@@ -70,6 +84,7 @@ export function PopUp({ floor, roomName, reservations, onClose }) {
 									legacyBehavior
 								>
 									<button
+										type="button"
 										className={`px-4 py-2 rounded ${
 											reservation.status
 												? "bg-blue-500 text-white hover:bg-blue-600"

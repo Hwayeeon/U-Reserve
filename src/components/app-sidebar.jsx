@@ -1,7 +1,6 @@
 "use client";
 
 import {
-	Bot,
 	CircleHelp,
 	GalleryVerticalEnd,
 	History,
@@ -9,7 +8,6 @@ import {
 	Info,
 	UserPen,
 } from "lucide-react";
-import * as React from "react";
 
 // Buat yang gak paham ini apa? Ini adalah komponen sidebar yang akan menampilkan menu navigasi dan informasi tim.
 // Jadi, ketika kita membuka aplikasi, kita akan melihat sidebar ini di sisi kiri layar.

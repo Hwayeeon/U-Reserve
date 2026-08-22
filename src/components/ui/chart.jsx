@@ -57,6 +57,7 @@ const ChartStyle = ({ id, config }) => {
 
 	return (
 		<style
+			// biome-ignore lint/security/noDangerouslySetInnerHtml: static CSS generated from the chart's own color config, not user input
 			dangerouslySetInnerHTML={{
 				__html: Object.entries(THEMES)
 					.map(

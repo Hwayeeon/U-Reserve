@@ -1,6 +1,5 @@
 import { Slot } from "@radix-ui/react-slot";
 import { ChevronRight, MoreHorizontal } from "lucide-react";
-import * as React from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -45,6 +44,8 @@ function BreadcrumbLink({ asChild, className, ...props }) {
 
 function BreadcrumbPage({ className, ...props }) {
 	return (
+		// biome-ignore lint/a11y/useFocusableInteractive: current page indicator, not a real navigable link
+		// biome-ignore lint/a11y/useSemanticElements: shadcn breadcrumb convention, span mirrors the sibling BreadcrumbLink anchors
 		<span
 			data-slot="breadcrumb-page"
 			role="link"

@@ -114,6 +114,7 @@ const RoomReservationForm = () => {
 		useState("AVAILABLE");
 
 	// Fetch timeslots from DB when roomName or floor changes
+	// biome-ignore lint/correctness/useExhaustiveDependencies: only refetch on room change, not on the timeSlot clear this effect itself triggers
 	useEffect(() => {
 		const fetchTimeSlots = async () => {
 			if (formData.roomName) {
@@ -176,7 +177,7 @@ const RoomReservationForm = () => {
 			if (result.success) {
 				router.push("/user/history");
 			} else {
-				setFailedReservation("Error submitting request: \n" + result.error);
+				setFailedReservation(`Error submitting request: \n${result.error}`);
 				document.getElementById("error").classList.remove("hidden");
 			}
 		});

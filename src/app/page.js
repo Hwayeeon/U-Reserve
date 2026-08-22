@@ -11,7 +11,7 @@ const navigation = [
 ];
 
 export default function Example() {
-	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+	const [_mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
 	return (
 		<div className="bg-white">

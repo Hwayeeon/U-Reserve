@@ -1,13 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { AppSidebar } from "@/components/app-sidebar";
-import { Separator } from "@/components/ui/separator";
-import {
-	SidebarInset,
-	SidebarProvider,
-	SidebarTrigger,
-} from "@/components/ui/sidebar";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
 export default function Page() {
 	const [openIndex, setOpenIndex] = useState(null);
@@ -60,8 +55,9 @@ export default function Page() {
 						<h1 className="text-4xl font-bold text-center">FAQ</h1>
 						<div className="mt-4 text-lg">
 							{faqItems.map((item, index) => (
-								<div key={index} className="border-b">
+								<div key={item.question} className="border-b">
 									<button
+										type="button"
 										onClick={() => toggleAccordion(index)}
 										className="w-full text-left py-2 font-medium flex justify-between items-center"
 									>

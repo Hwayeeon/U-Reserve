@@ -3,6 +3,7 @@
 	"vcs": { "enabled": true, "clientKind": "git", "useIgnoreFile": true },
 	"files": { "ignoreUnknown": false },
 	"formatter": { "enabled": true, "indentStyle": "tab" },
+	"css": { "parser": { "tailwindDirectives": true } },
 	"linter": {
 		"enabled": true,
 		"rules": {
@@ -210,7 +211,15 @@
 				}
 			}
 		},
-		{ "includes": ["**/*.ts", "**/*.tsx"], "javascript": { "globals": [] } }
+		{ "includes": ["**/*.ts", "**/*.tsx"], "javascript": { "globals": [] } },
+		{
+			"includes": ["src/app/page.js"],
+			"linter": {
+				"rules": {
+					"a11y": { "useValidAnchor": "off", "noAmbiguousAnchorText": "off" }
+				}
+			}
+		}
 	],
 	"assist": {
 		"enabled": true,

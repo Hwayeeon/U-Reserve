@@ -33,14 +33,14 @@ export function decrypt(
 		const ciphertextArray = ciphertext.match(/.{1,3}/g);
 		const keywordText = createKeywordText(ciphertextArray.length, hidKeyword);
 		for (const x in ciphertextArray) {
-			const baseStringIndex = parseInt(ciphertextArray[x]) / 5 - 50;
+			const baseStringIndex = parseInt(ciphertextArray[x], 10) / 5 - 50;
 			const z = baseString[baseStringIndex];
 			const y = selKeywordTable[0].indexOf(z);
 			const p = selKeywordTable[y].indexOf(keywordText[x]);
 			plaintext += selKeywordTable[0][p];
 		}
 		return plaintext;
-	} catch (error) {
+	} catch (_error) {
 		return null;
 	}
 }

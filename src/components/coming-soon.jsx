@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 
-export function ComingSoon({}) {
+export function ComingSoon() {
 	return (
 		<div className="w-full min-h-screen bg-gray-100 flex flex-col justify-center items-center px-6">
 			<div className="max-w-md w-full text-center">

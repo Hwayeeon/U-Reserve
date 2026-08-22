@@ -17,7 +17,6 @@ import {
 	AlertDialogFooter,
 	AlertDialogHeader,
 	AlertDialogTitle,
-	AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -61,7 +60,8 @@ export function NavUser({ user }) {
 		document.cookie.split(";").forEach((cookie) => {
 			const eqPos = cookie.indexOf("=");
 			const name = eqPos > -1 ? cookie.substring(0, eqPos) : cookie;
-			document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+			// biome-ignore lint/suspicious/noDocumentCookie: bulk-clearing all client cookies on logout, not a single named cookie read/write
+			document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT`;
 		});
 		router.push("/login");
 	}

@@ -1,7 +1,5 @@
 "use client";
-
-import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { AppSidebar } from "@/components/app-sidebar";
 import { ComingSoon } from "@/components/coming-soon";
 import { FloorMap } from "@/components/floor-map";
@@ -156,12 +154,14 @@ export default function Page() {
 								}}
 							/>
 							<button
+								type="button"
 								onClick={goPrevFloor}
 								className="absolute left-0 top-1/2 -translate-y-1/2 bg-white/30 hover:bg-white/60 rounded px-2 py-2"
 							>
 								&lt;
 							</button>
 							<button
+								type="button"
 								onClick={goNextFloor}
 								className="absolute right-0 top-1/2 -translate-y-1/2 bg-white/30 hover:bg-white/60 rounded px-2 py-2"
 							>

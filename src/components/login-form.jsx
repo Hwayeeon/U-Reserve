@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { login } from "@/app/login/action";
@@ -9,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 
 export function LoginForm({ className, ...props }) {
-	const [failedAttempts, setFailedAttempts] = useState(0);
+	const [_failedAttempts, setFailedAttempts] = useState(0);
 	const [isLocked, setIsLocked] = useState(false);
 	const [resetTimeout, setResetTimeout] = useState(null);
 	const MAX_FAILED_ATTEMPTS = 3;
@@ -104,10 +105,11 @@ export function LoginForm({ className, ...props }) {
 						</div>
 					</form>
 					<div className="bg-muted relative hidden md:block">
-						<img
-							src="favicon.ico"
-							alt="Image"
-							className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+						<Image
+							src="/favicon.ico"
+							alt=""
+							fill
+							className="object-cover dark:brightness-[0.2] dark:grayscale"
 						/>
 					</div>
 				</CardContent>

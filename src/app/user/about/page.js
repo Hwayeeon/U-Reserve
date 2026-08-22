@@ -235,18 +235,17 @@ export default function AboutPage() {
 									Meet Our Team
 								</h2>
 								<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 max-w-5xl mx-auto">
-									{developers.map((dev, index) => (
+									{developers.map((dev) => (
 										<div
-											key={index}
+											key={dev.NIM}
 											className="bg-gray-100 p-6 rounded-lg shadow-md flex flex-col items-center text-center hover:shadow-lg transition-shadow"
 										>
-											{/* <div className="mb-4 w-20 h-20 bg-gradient-to-br from-[#FFD700] to-[#0047AB] rounded-full flex items-center justify-center text-white text-2xl font-bold">
-                        {dev.name.charAt(0)}
-                      </div> */}
-											<img
+											<Image
 												src={dev.avatar}
 												alt={dev.name}
-												className="mb-4 w-20 h-20 rounded-full"
+												width={80}
+												height={80}
+												className="mb-4 w-20 h-20 rounded-full object-cover"
 											/>
 											<h3 className="mb-1 text-lg font-semibold text-gray-800">
 												{dev.name}
