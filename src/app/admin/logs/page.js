@@ -152,7 +152,16 @@ export default function ReservationsPage() {
 														{reservation.history_id.split("-")[0]}
 													</TableCell>
 													<TableCell>{reservation.room_name}</TableCell>
-													<TableCell>{reservation.user_id}</TableCell>
+													<TableCell>
+														{reservation.user_id}
+														{reservation.organization_name && (
+															<span className="block text-xs text-muted-foreground">
+																For {reservation.organization_name} (
+																{reservation.organization_position}) ·{" "}
+																{reservation.attendee_count} people
+															</span>
+														)}
+													</TableCell>
 													<TableCell>{reservation.schedule}</TableCell>
 													<TableCell>
 														{format(

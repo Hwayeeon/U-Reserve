@@ -1,4 +1,6 @@
 "use server";
+import { validateReservation } from "@/lib/reservationRules";
+import { campusNow } from "@/lib/roomStatus";
 import { createClient } from "@/utils/supabase/server";
 
 export async function getRoomReservationData(params) {
@@ -103,38 +105,118 @@ export async function handleReservation(params) {
 	return { success: true, updateHistoryData };
 }
 
+// Who is submitting: the signed-in Supabase user. The client-sent id is only
+// trusted in the local dev login bypass, which has no Supabase session.
+async function requesterId(supabase, claimedId) {
+	const { data } = await supabase.auth.getUser();
+	const sessionId = data?.user?.user_metadata?.user_id;
+	if (sessionId) return String(sessionId);
+	if (getDevBypassRole() && claimedId) return String(claimedId);
+	return null;
+}
+
+// Validates a borrow request against the shared rules and the live schedule,
+// then files it as Pending. Returns { success, error?, fieldErrors? }.
 export async function submitRequest(params) {
 	const supabase = await createClient();
+	const now = campusNow();
 
-	const { data: statusData } = await supabase
+	const userId = await requesterId(supabase, params.userId);
+	if (!userId) {
+		return {
+			success: false,
+			error: "Your session has expired. Sign in again.",
+		};
+	}
+
+	const fieldErrors = validateReservation(params, now);
+	if (Object.keys(fieldErrors).length > 0) {
+		return {
+			success: false,
+			error: "Some details need fixing.",
+			fieldErrors,
+		};
+	}
+
+	const { data: slots, error: slotError } = await supabase
 		.from("rooms")
 		.select("status")
 		.eq("room_name", params.roomName)
 		.eq("date", params.date)
 		.eq("schedule", params.schedule);
 
-	if (!statusData[0]?.status) {
+	if (slotError) {
+		console.error("Error checking slot:", slotError);
 		return {
 			success: false,
-			error: "Room is already reserved for this time slot.",
+			error: "Couldn't check the room's schedule. Try again.",
+		};
+	}
+	if (!slots?.length) {
+		return {
+			success: false,
+			error: "That time slot doesn't exist for this room and date.",
+			fieldErrors: { schedule: "Not on this room's schedule." },
+		};
+	}
+	if (!slots[0].status) {
+		return {
+			success: false,
+			error: "Someone already reserved this time slot.",
+			fieldErrors: { schedule: "Already reserved." },
 		};
 	}
 
-	const { data, error } = await supabase.from("history").insert([
-		{
-			user_id: params.userId,
-			room_name: params.roomName,
-			order_date: params.date,
-			schedule: params.schedule,
-			reason: params.reason,
-			status: "Pending",
-			for_date: params.date,
-		},
-	]);
+	// One active request per person per time slot, in any room.
+	const { data: clashes, error: clashError } = await supabase
+		.from("history")
+		.select("room_name")
+		.eq("user_id", userId)
+		.eq("for_date", params.date)
+		.eq("schedule", params.schedule)
+		.in("status", ["Pending", "Accepted"]);
+
+	if (clashError) {
+		console.error("Error checking existing requests:", clashError);
+		return {
+			success: false,
+			error: "Couldn't check your existing bookings. Try again.",
+		};
+	}
+	if (clashes?.length) {
+		return {
+			success: false,
+			error: `You already have a request for ${clashes[0].room_name} at this time.`,
+			fieldErrors: { schedule: "You already have a booking at this time." },
+		};
+	}
+
+	const request = {
+		user_id: userId,
+		room_name: params.roomName,
+		order_date: now.date,
+		schedule: params.schedule,
+		reason: params.purpose.trim(),
+		status: "Pending",
+		for_date: params.date,
+	};
+	if (params.borrowerType === "organization") {
+		Object.assign(request, {
+			borrower_type: "organization",
+			organization_name: params.organizationName.trim(),
+			organization_position: params.organizationPosition.trim(),
+			attendee_count: Number(params.attendeeCount),
+		});
+	}
+
+	const { data, error } = await supabase.from("history").insert([request]);
 
 	if (error) {
 		console.error("Error submitting request:", error);
-		return { success: false, error };
+		return {
+			success: false,
+			error: "Couldn't submit your request. Try again.",
+		};
 	}
 	return { success: true, data };
 }
