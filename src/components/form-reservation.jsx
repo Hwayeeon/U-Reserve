@@ -23,6 +23,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { getCookies } from "@/lib/cookies";
 import { getRoomReservationData, submitRequest } from "@/lib/database";
+import { campusNow } from "@/lib/roomStatus";
 
 // Dummy data
 // ini entar diambil dari supabase datanya
@@ -97,6 +98,8 @@ const RoomReservationForm = () => {
 	const floorFromQuery = searchParams.get("floor") || "";
 	const roomNameFromQuery = searchParams.get("roomName") || "";
 	const timeSlotFromQuery = searchParams.get("timeSlot") || "";
+	// The floor map's pop-up can pick a day other than today.
+	const reservationDate = searchParams.get("date") || campusNow().date;
 	const usernameFromQuery =
 		searchParams.get("username") || user?.username || "";
 	const [failedReservation, setFailedReservation] = useState("");
@@ -118,10 +121,9 @@ const RoomReservationForm = () => {
 	useEffect(() => {
 		const fetchTimeSlots = async () => {
 			if (formData.roomName) {
-				const today = new Date().toISOString().split("T")[0];
 				const reservations = await getRoomReservationData({
 					roomName: formData.roomName,
-					date: today,
+					date: reservationDate,
 				});
 				// status: true means AVAILABLE, otherwise RESERVED
 				const mappedSlots = (reservations || []).map((slot) => ({
@@ -169,7 +171,7 @@ const RoomReservationForm = () => {
 		e.preventDefault();
 		submitRequest({
 			roomName: formData.roomName,
-			date: new Date().toISOString().split("T")[0], // Use today's date
+			date: reservationDate,
 			schedule: formData.timeSlot,
 			userId: user.user_id, // Assuming borrowerName is the user ID
 			reason: formData.purpose,
@@ -188,7 +190,7 @@ const RoomReservationForm = () => {
 			<CardHeader>
 				<CardTitle>Room Reservation</CardTitle>
 				<CardDescription>
-					Book a room for class, meeting or event
+					Book a room for class, meeting or event on {reservationDate}
 				</CardDescription>
 			</CardHeader>
 			<form onSubmit={handleSubmit}>

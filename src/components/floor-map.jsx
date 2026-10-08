@@ -9,11 +9,12 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useId, useMemo, useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { getFloorScheduleData, getRoomReservationData } from "@/lib/database";
+import { getFloorScheduleData } from "@/lib/database";
 import { doorSwingPath, parseFloor, wallPath } from "@/lib/floorPlan";
 import { campusNow, getRoomStatus, groupByRoom } from "@/lib/roomStatus";
 import { cn } from "@/lib/utils";
 import { PopUp } from "./pop-up";
+import { RoomStatusBadge } from "./room-status-badge";
 
 const STATUS_REFRESH_MS = 60_000;
 const CLOCK_TICK_MS = 30_000;
@@ -71,8 +72,6 @@ const STATUS_STYLES = {
 		wall: "stroke-emerald-600/80 dark:stroke-emerald-400/80",
 		dot: "fill-emerald-500",
 		swatch: "bg-emerald-50 border-emerald-600/80 dark:bg-emerald-950/60",
-		badge:
-			"bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300",
 	},
 	busy: {
 		label: "In use",
@@ -80,7 +79,6 @@ const STATUS_STYLES = {
 		wall: "stroke-rose-500/70 dark:stroke-rose-400/70",
 		dot: "fill-rose-500",
 		swatch: "bg-rose-50 border-rose-500/70 dark:bg-rose-950/50",
-		badge: "bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300",
 	},
 	later: {
 		label: "Free later",
@@ -88,7 +86,6 @@ const STATUS_STYLES = {
 		wall: "stroke-sky-600/80 dark:stroke-sky-400/80",
 		dot: "fill-sky-500",
 		swatch: "bg-sky-50 border-sky-600/80 dark:bg-sky-950/70",
-		badge: "bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300",
 	},
 	none: {
 		label: "Unavailable today",
@@ -96,7 +93,6 @@ const STATUS_STYLES = {
 		wall: "stroke-muted-foreground/50",
 		dot: "fill-muted-foreground/60",
 		swatch: "bg-muted border-muted-foreground/50",
-		badge: "bg-muted text-muted-foreground",
 	},
 };
 
@@ -432,31 +428,6 @@ function Room({
 	);
 }
 
-function StatusBadge({ status }) {
-	if (!status) {
-		return <span className="h-5 w-16 animate-pulse rounded-full bg-muted" />;
-	}
-	return (
-		<span
-			className={cn(
-				"inline-flex shrink-0 items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium",
-				STATUS_STYLES[status.state].badge,
-			)}
-		>
-			<span
-				className={cn(
-					"size-1.5 rounded-full",
-					status.state === "free" && "bg-emerald-500",
-					status.state === "busy" && "bg-rose-500",
-					status.state === "later" && "bg-sky-500",
-					status.state === "none" && "bg-muted-foreground/60",
-				)}
-			/>
-			{status.short}
-		</span>
-	);
-}
-
 // Room list with live status (synced with the map) and what else is on the floor.
 function FloorDetails({
 	floorName,
@@ -608,7 +579,7 @@ function FloorDetails({
 											{status ? status.label : styleOf(room.type).label}
 										</span>
 									</span>
-									<StatusBadge status={status} />
+									<RoomStatusBadge status={status} />
 								</button>
 							</li>
 						);
@@ -648,7 +619,6 @@ function FloorDetails({
 export function FloorMap({ className, floorObject }) {
 	const [selectedRoom, setSelectedRoom] = useState(null);
 	const [hoveredRoom, setHoveredRoom] = useState(null);
-	const [reservations, setReservations] = useState([]);
 	const [schedule, setSchedule] = useState(null);
 	const [refreshing, setRefreshing] = useState(false);
 	const [updatedAt, setUpdatedAt] = useState(null);
@@ -726,22 +696,6 @@ export function FloorMap({ className, floorObject }) {
 		const interval = setInterval(() => setNow(campusNow()), CLOCK_TICK_MS);
 		return () => clearInterval(interval);
 	}, []);
-
-	// Fetch reservation data when a room is selected
-	useEffect(() => {
-		if (!selectedRoom) return;
-		let ignore = false;
-		setReservations([]);
-		getRoomReservationData({
-			roomName: selectedRoom,
-			date: campusNow().date,
-		}).then((data) => {
-			if (!ignore) setReservations(data);
-		});
-		return () => {
-			ignore = true;
-		};
-	}, [selectedRoom]);
 
 	// Close any open room when switching floors
 	// biome-ignore lint/correctness/useExhaustiveDependencies: reset only when the floor changes
@@ -861,7 +815,11 @@ export function FloorMap({ className, floorObject }) {
 				<PopUp
 					floor={floorName}
 					roomName={selectedRoom}
-					reservations={reservations}
+					subtitle={`${floorName.replace(/^Floor\s*/i, "Floor ")} · ${
+						styleOf(rooms.find((room) => room.name === selectedRoom)?.type)
+							.label
+					}`}
+					status={statuses?.get(selectedRoom)}
 					onClose={() => {
 						setSelectedRoom(null);
 						refresh();
