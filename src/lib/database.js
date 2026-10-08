@@ -22,6 +22,24 @@ export async function getRoomReservationData(params) {
 	});
 }
 
+// All of a day's time slots for several rooms at once (used for live status on the floor map).
+export async function getFloorScheduleData(params) {
+	if (!params.roomNames?.length) return [];
+	const supabase = await createClient();
+
+	const { data, error } = await supabase
+		.from("rooms")
+		.select("room_name, schedule, status")
+		.in("room_name", params.roomNames)
+		.eq("date", params.date);
+
+	if (error) {
+		console.error("Error fetching floor schedule:", error);
+		return [];
+	}
+	return data;
+}
+
 export async function getUserHistoryReservationData(params) {
 	const supabase = await createClient();
 

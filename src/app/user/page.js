@@ -1,4 +1,5 @@
 "use client";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { AppSidebar } from "@/components/app-sidebar";
 import { ComingSoon } from "@/components/coming-soon";
@@ -11,6 +12,7 @@ import {
 	BreadcrumbPage,
 	BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import {
 	SidebarInset,
@@ -142,32 +144,48 @@ export default function Page() {
 						id="content"
 						className="flex-1 flex flex-col items-center gap-4 p-4 pt-0 min-h-min overflow-auto"
 					>
-						<div className="text-lg text-center font-bold w-full">
-							{currentFloorKey}
-						</div>
-						<div className="relative w-full max-w-lg h-full">
-							<FloorMap
-								className="w-full h-full object-contain border rounded"
-								floorObject={{
-									floorName: currentFloorKey,
-									floorImage: currentFloor,
-								}}
-							/>
-							<button
-								type="button"
+						<div className="flex w-full max-w-6xl items-center gap-2">
+							<Button
+								variant="outline"
+								size="icon"
 								onClick={goPrevFloor}
-								className="absolute left-0 top-1/2 -translate-y-1/2 bg-white/30 hover:bg-white/60 rounded px-2 py-2"
+								aria-label="Previous floor"
 							>
-								&lt;
-							</button>
-							<button
-								type="button"
+								<ChevronLeft />
+							</Button>
+							<div className="flex flex-1 gap-1 overflow-x-auto rounded-lg bg-muted p-1">
+								{floors[activeTab].map((floorKey, index) => (
+									<button
+										key={floorKey}
+										type="button"
+										onClick={() => setFloorIndex(index)}
+										aria-current={index === floorIndex ? "true" : undefined}
+										className={`flex-1 whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+											index === floorIndex
+												? "bg-background text-foreground shadow-sm"
+												: "text-muted-foreground hover:text-foreground"
+										}`}
+									>
+										{floorKey.replace(/^Floor\s*/i, "Floor ")}
+									</button>
+								))}
+							</div>
+							<Button
+								variant="outline"
+								size="icon"
 								onClick={goNextFloor}
-								className="absolute right-0 top-1/2 -translate-y-1/2 bg-white/30 hover:bg-white/60 rounded px-2 py-2"
+								aria-label="Next floor"
 							>
-								&gt;
-							</button>
+								<ChevronRight />
+							</Button>
 						</div>
+						<FloorMap
+							className="w-full max-w-6xl"
+							floorObject={{
+								floorName: currentFloorKey,
+								floorImage: currentFloor,
+							}}
+						/>
 					</div>
 				)}
 			</SidebarInset>
